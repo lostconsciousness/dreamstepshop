@@ -9,7 +9,10 @@ import type {
   Product,
 } from './types';
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8000').replace(/\/$/, '');
+/** Base URL when `VITE_API_URL` is not set (e.g. Cloudflare). Set env to override. */
+const DEFAULT_API_BASE_URL = 'https://6520-91-141-49-187.ngrok-free.app';
+
+const API_BASE_URL = (import.meta.env.VITE_API_URL ?? DEFAULT_API_BASE_URL).replace(/\/$/, '');
 const CART_TOKEN_STORAGE_KEY = 'cart_token';
 
 type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
