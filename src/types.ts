@@ -1,4 +1,4 @@
-export type Currency = 'usd' | 'eur' | 'uah';
+export type Currency = 'usd' | 'eur';
 
 export type ProductVariant = {
   id: number;

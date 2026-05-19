@@ -4,7 +4,7 @@ import type { Currency } from './types';
 const STORAGE_KEY = 'ui_currency';
 
 const isCurrency = (value: string | null): value is Currency => {
-  return value === 'usd' || value === 'eur' || value === 'uah';
+  return value === 'usd' || value === 'eur';
 };
 
 const getInitialCurrency = (): Currency => {

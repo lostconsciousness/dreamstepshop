@@ -7,7 +7,7 @@ import { Icon } from './Icon';
 import logoImage from '../assets/logo.png';
 
 export const Layout = () => {
-  const { language, setLanguage, t } = useI18n();
+  const { t } = useI18n();
   const { currency, setCurrency } = useCurrency();
   const { totalItems } = useCartSummary();
 
@@ -46,17 +46,6 @@ export const Layout = () => {
             >
               <option value="usd">USD $</option>
               <option value="eur">EUR €</option>
-              <option value="uah">UAH ₴</option>
-            </select>
-          </label>
-          <label className="lang-switch" aria-label={t.languageLabel}>
-            <select
-              value={language}
-              onChange={(event) => setLanguage(event.target.value as 'en' | 'uk' | 'ru')}
-            >
-              <option value="en">EN</option>
-              <option value="uk">UK</option>
-              <option value="ru">RU</option>
             </select>
           </label>
         </div>

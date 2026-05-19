@@ -80,9 +80,8 @@ const buildUrl = (path: string, withCurrency: boolean): string => {
     return `${API_BASE_URL}${path}`;
   }
   const currency: Currency = getCurrentCurrency();
-  const queryValue = currency === 'uah' ? '' : currency;
   const separator = path.includes('?') ? '&' : '?';
-  return `${API_BASE_URL}${path}${separator}currency=${encodeURIComponent(queryValue)}`;
+  return `${API_BASE_URL}${path}${separator}currency=${encodeURIComponent(currency)}`;
 };
 
 async function requestJson<T>(path: string, options: RequestOptions = {}): Promise<RequestResult<T>> {
