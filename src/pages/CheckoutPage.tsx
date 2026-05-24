@@ -5,6 +5,7 @@ import { api, getStoredCartToken, setStoredCartToken } from '../api';
 import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
 import { StateBlock } from '../components/State';
+import { isCryptoCloudEnabled } from '../cryptocloud';
 import { useCryptoCloudPayment } from '../hooks/useCryptoCloudPayment';
 import { useI18n } from '../i18n';
 import type { CheckoutPayload } from '../types';
@@ -42,6 +43,9 @@ export const CheckoutPage = () => {
       setStoredCartToken(null);
       queryClient.invalidateQueries({ queryKey: ['cart'] });
       queryClient.setQueryData(['order', order.id, currency], order);
+      if (isCryptoCloudEnabled()) {
+        cryptoPay.pay(order);
+      }
     },
     onError: (error) => {
       setFormError(extractApiError(error));
@@ -107,28 +111,46 @@ export const CheckoutPage = () => {
 
   if (checkoutMutation.isSuccess) {
     const order = checkoutMutation.data;
+    const paying = cryptoPay.isPaying;
+    const payFailed = Boolean(cryptoPay.error);
+
     return (
       <StateBlock
-        emoji="✅"
-        title={t.orderCreated}
-        message={t.orderCreatedMessage(order.id, formatPrice(order.total, order.currency))}
+        emoji={paying ? '💳' : '✅'}
+        title={paying ? t.redirectingToPay : t.orderCreated}
+        message={
+          paying
+            ? t.checkoutRedirectingMessage(order.id)
+            : t.orderCreatedMessage(order.id, formatPrice(order.total, order.currency))
+        }
         actions={
-          <>
-            {cryptoPay.isEnabled ? (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => cryptoPay.pay(order)}
-                disabled={cryptoPay.isPaying}
-              >
-                <Icon name="credit-card-1" />
-                <span>{cryptoPay.isPaying ? t.redirectingToPay : t.payCrypto}</span>
-              </button>
-            ) : null}
-            <Link to={`/orders/${order.id}`} className="btn btn-ghost">
-              {t.viewOrder}
-            </Link>
-          </>
+          paying ? null : (
+            <>
+              {payFailed ? (
+                <p className="toast error" style={{ margin: 0, width: '100%', textAlign: 'center' }}>
+                  {extractApiError(cryptoPay.error)}
+                </p>
+              ) : null}
+              {cryptoPay.isEnabled ? (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => cryptoPay.pay(order)}
+                  disabled={cryptoPay.isPaying}
+                >
+                  <Icon name="credit-card-1" />
+                  <span>{t.payCrypto}</span>
+                </button>
+              ) : !payFailed ? (
+                <p className="toast error" style={{ margin: 0, width: '100%', textAlign: 'center' }}>
+                  {t.cryptoCloudNotConfigured}
+                </p>
+              ) : null}
+              <Link to={`/orders/${order.id}`} className="btn btn-ghost">
+                {t.viewOrder}
+              </Link>
+            </>
+          )
         }
       />
     );
@@ -290,16 +312,24 @@ export const CheckoutPage = () => {
 
           {formError ? <p className="toast error">{formError}</p> : null}
 
+          {!cryptoPay.isEnabled ? (
+            <p className="muted" style={{ margin: '0 0 0.75rem', fontSize: '0.875rem' }}>
+              {t.cryptoCloudNotConfigured}
+            </p>
+          ) : null}
+
           <button
             type="submit"
             className="btn btn-primary btn-block"
-            disabled={checkoutMutation.isPending}
+            disabled={checkoutMutation.isPending || cryptoPay.isPaying}
           >
             <Icon name="lock-alt-1" />
             <span>
-              {checkoutMutation.isPending
-                ? t.confirming
-                : `${t.confirm} · ${formatPrice(cart.total, cartCurrency)}`}
+              {checkoutMutation.isPending || cryptoPay.isPaying
+                ? cryptoPay.isEnabled
+                  ? t.confirmingAndPaying
+                  : t.confirming
+                : `${cryptoPay.isEnabled ? t.confirmAndPay : t.confirm} · ${formatPrice(cart.total, cartCurrency)}`}
             </span>
           </button>
         </form>

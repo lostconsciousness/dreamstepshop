@@ -55,7 +55,10 @@ type Messages = {
   checkoutSubtitle: string;
   payNow: string;
   confirm: string;
+  confirmAndPay: string;
   confirming: string;
+  confirmingAndPaying: string;
+  checkoutRedirectingMessage: (orderId: number) => string;
   invalidEmail: string;
   invalidOrderId: string;
   loadingOrder: string;
@@ -182,7 +185,11 @@ const messages: Record<Language, Messages> = {
     fillRequired: 'Please fill in all required fields.',
     payNow: 'To pay',
     confirm: 'Confirm order',
+    confirmAndPay: 'Place order and pay',
     confirming: 'Confirming...',
+    confirmingAndPaying: 'Creating order, redirecting to payment…',
+    checkoutRedirectingMessage: (orderId) =>
+      `Order #${orderId} created. Opening CryptoCloud payment page…`,
     invalidEmail: 'Please enter a valid email.',
     invalidOrderId: 'Invalid order id',
     loadingOrder: 'Loading order...',
@@ -296,7 +303,11 @@ const messages: Record<Language, Messages> = {
     fillRequired: 'Заполни все обязательные поля.',
     payNow: 'К оплате',
     confirm: 'Оформить заказ',
+    confirmAndPay: 'Оформить и оплатить',
     confirming: 'Подтверждение...',
+    confirmingAndPaying: 'Создаём заказ, переход к оплате…',
+    checkoutRedirectingMessage: (orderId) =>
+      `Заказ №${orderId} создан. Открываем страницу оплаты CryptoCloud…`,
     invalidEmail: 'Введи корректный email.',
     invalidOrderId: 'Неверный номер заказа',
     loadingOrder: 'Загружаем заказ...',
