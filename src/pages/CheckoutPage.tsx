@@ -5,6 +5,7 @@ import { api, getStoredCartToken, setStoredCartToken } from '../api';
 import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
 import { StateBlock } from '../components/State';
+import { useCryptoCloudPayment } from '../hooks/useCryptoCloudPayment';
 import { useI18n } from '../i18n';
 import type { CheckoutPayload } from '../types';
 import { extractApiError, formatPrice } from '../utils';
@@ -26,6 +27,7 @@ export const CheckoutPage = () => {
   const [addressLine, setAddressLine] = useState('');
   const [shippingNotes, setShippingNotes] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
+  const cryptoPay = useCryptoCloudPayment();
 
   const cartQuery = useQuery({
     queryKey: ['cart', currency],
@@ -111,9 +113,22 @@ export const CheckoutPage = () => {
         title={t.orderCreated}
         message={t.orderCreatedMessage(order.id, formatPrice(order.total, order.currency))}
         actions={
-          <Link to={`/orders/${order.id}`} className="btn btn-primary">
-            {t.viewOrder}
-          </Link>
+          <>
+            {cryptoPay.isEnabled ? (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => cryptoPay.pay(order)}
+                disabled={cryptoPay.isPaying}
+              >
+                <Icon name="credit-card-1" />
+                <span>{cryptoPay.isPaying ? t.redirectingToPay : t.payCrypto}</span>
+              </button>
+            ) : null}
+            <Link to={`/orders/${order.id}`} className="btn btn-ghost">
+              {t.viewOrder}
+            </Link>
+          </>
         }
       />
     );

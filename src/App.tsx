@@ -7,6 +7,8 @@ import { CatalogPage } from './pages/CatalogPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { OrderPage } from './pages/OrderPage';
+import { PaymentFailedPage } from './pages/PaymentFailedPage';
+import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
 import { ProductPage } from './pages/ProductPage';
 
 const RouteErrorElement = () => {
@@ -36,6 +38,8 @@ const router = createBrowserRouter([
       { path: 'cart', element: <CartPage /> },
       { path: 'checkout', element: <CheckoutPage /> },
       { path: 'orders/:id', element: <OrderPage /> },
+      { path: 'payment-success', element: <PaymentSuccessPage /> },
+      { path: 'payment-failed', element: <PaymentFailedPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

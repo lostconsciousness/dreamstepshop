@@ -1,9 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api';
 import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
 import { StateBlock } from '../components/State';
+import { useCryptoCloudPayment, isOrderPaid } from '../hooks/useCryptoCloudPayment';
 import { useI18n } from '../i18n';
 import type { ShippingAddress } from '../types';
 import { extractApiError, formatPrice } from '../utils';
@@ -26,19 +27,12 @@ export const OrderPage = () => {
   const { currency } = useCurrency();
   const params = useParams();
   const orderId = Number(params.id);
-  const queryClient = useQueryClient();
+  const cryptoPay = useCryptoCloudPayment();
 
   const orderQuery = useQuery({
     queryKey: ['order', orderId, currency],
     queryFn: () => api.getOrder(orderId),
     enabled: Number.isFinite(orderId),
-  });
-
-  const payMutation = useMutation({
-    mutationFn: () => api.payOrder(orderId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['order', orderId] });
-    },
   });
 
   if (!Number.isFinite(orderId)) {
@@ -62,6 +56,8 @@ export const OrderPage = () => {
   const order = orderQuery.data;
   const totalQty = order.lines.reduce((sum, line) => sum + (Number(line.quantity) || 0), 0);
   const orderCurrency = order.currency || order.lines[0]?.currency || 'UAH';
+  const paid = isOrderPaid(order.status);
+  const showCryptoPay = cryptoPay.isEnabled && !paid;
 
   return (
     <section className="content">
@@ -135,27 +131,31 @@ export const OrderPage = () => {
           <span className="price">{formatPrice(order.total, orderCurrency)}</span>
         </div>
 
+        {paid ? <p className="toast success">{t.paymentDone}</p> : null}
+
         <div className="add-row">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => payMutation.mutate()}
-            disabled={payMutation.isPending}
-          >
-            <Icon name="credit-card-1" />
-            <span>{payMutation.isPending ? t.processing : t.payTest}</span>
-          </button>
+          {showCryptoPay ? (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => cryptoPay.pay(order)}
+              disabled={cryptoPay.isPaying}
+            >
+              <Icon name="credit-card-1" />
+              <span>{cryptoPay.isPaying ? t.redirectingToPay : t.payCrypto}</span>
+            </button>
+          ) : null}
           <Link to="/" className="btn btn-ghost">
             <Icon name="arrow-left" />
             <span>{t.toCatalog}</span>
           </Link>
         </div>
 
-        {payMutation.isError ? (
-          <p className="toast error">{extractApiError(payMutation.error)}</p>
+        {!cryptoPay.isEnabled && !paid ? (
+          <p className="toast error">{t.cryptoCloudNotConfigured}</p>
         ) : null}
-        {payMutation.isSuccess ? (
-          <p className="toast success">{payMutation.data.message || payMutation.data.status || t.paymentDone}</p>
+        {cryptoPay.error ? (
+          <p className="toast error">{extractApiError(cryptoPay.error)}</p>
         ) : null}
       </article>
     </section>
