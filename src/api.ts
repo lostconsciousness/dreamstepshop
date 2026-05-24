@@ -1,18 +1,13 @@
-import { getCurrentCurrency } from './currency';
+import { API_BASE_URL } from './config';
+import { resolveProductImageUrl } from './media';
 import type {
   ApiErrorResponse,
   Cart,
   CheckoutPayload,
-  Currency,
   Order,
-  PaymentConfirm,
+  PaymentInit,
   Product,
 } from './types';
-
-/** Base URL when `VITE_API_URL` is not set (e.g. Cloudflare). Set env to override. */
-const DEFAULT_API_BASE_URL = 'https://6520-91-141-49-187.ngrok-free.app';
-
-const API_BASE_URL = (import.meta.env.VITE_API_URL ?? DEFAULT_API_BASE_URL).replace(/\/$/, '');
 const CART_TOKEN_STORAGE_KEY = 'cart_token';
 
 type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
@@ -22,7 +17,6 @@ type RequestOptions = {
   body?: unknown;
   withCartToken?: boolean;
   allowMissingCartToken?: boolean;
-  withCurrency?: boolean;
 };
 
 type RequestResult<T> = {
@@ -75,23 +69,8 @@ const parseErrorMessage = (payload: ApiErrorResponse | null, status: number): st
   return `Request failed (${status}).`;
 };
 
-const buildUrl = (path: string, withCurrency: boolean): string => {
-  if (!withCurrency) {
-    return `${API_BASE_URL}${path}`;
-  }
-  const currency: Currency = getCurrentCurrency();
-  const separator = path.includes('?') ? '&' : '?';
-  return `${API_BASE_URL}${path}${separator}currency=${encodeURIComponent(currency)}`;
-};
-
 async function requestJson<T>(path: string, options: RequestOptions = {}): Promise<RequestResult<T>> {
-  const {
-    method = 'GET',
-    body,
-    withCartToken = false,
-    allowMissingCartToken = false,
-    withCurrency = false,
-  } = options;
+  const { method = 'GET', body, withCartToken = false, allowMissingCartToken = false } = options;
 
   const headers: Record<string, string> = {
     Accept: 'application/json',
@@ -110,7 +89,7 @@ async function requestJson<T>(path: string, options: RequestOptions = {}): Promi
     throw new Error('Cart not found. Add a product first.');
   }
 
-  const url = buildUrl(path, withCurrency);
+  const url = `${API_BASE_URL}${path}`;
 
   let response: Response;
   try {
@@ -166,14 +145,14 @@ const normalizeCart = (cart: Cart): Cart => ({
   ...cart,
   lines: Array.isArray(cart?.lines) ? cart.lines : [],
   total: cart?.total ?? '0',
-  currency: cart?.currency ?? 'UAH',
+  currency: cart?.currency ?? 'USD',
 });
 
 const normalizeOrder = (order: Order): Order => ({
   ...order,
   lines: Array.isArray(order?.lines) ? order.lines : [],
   total: order?.total ?? '0',
-  currency: order?.currency ?? 'UAH',
+  currency: order?.currency ?? 'USD',
   shipping: order?.shipping
     ? {
         country: order.shipping.country ?? '',
@@ -190,6 +169,9 @@ const normalizeOrder = (order: Order): Order => ({
 
 const normalizeProduct = (product: Product): Product => ({
   ...product,
+  category: product?.category ?? null,
+  is_active: product?.is_active !== false,
+  image_url: resolveProductImageUrl(product?.image_url),
   variants: Array.isArray(product?.variants) ? product.variants : [],
 });
 
@@ -200,19 +182,22 @@ export const api = {
   },
 
   async getProducts(): Promise<Product[]> {
-    const { data } = await requestJson<Product[]>('/api/products', { withCurrency: true });
-    return Array.isArray(data) ? data.map(normalizeProduct) : [];
+    const { data } = await requestJson<Product[]>('/api/products');
+    return Array.isArray(data) ? data.map(normalizeProduct).filter((p) => p.is_active) : [];
   },
 
   async getProduct(id: number | string): Promise<Product> {
-    const { data } = await requestJson<Product>(`/api/products/${id}`, { withCurrency: true });
-    return normalizeProduct(data);
+    const { data } = await requestJson<Product>(`/api/products/${id}`);
+    const product = normalizeProduct(data);
+    if (!product.is_active) {
+      throw new Error('Product is not available.');
+    }
+    return product;
   },
 
   async getCart(): Promise<Cart> {
     const { data } = await requestJson<Cart>('/api/cart', {
       withCartToken: true,
-      withCurrency: true,
     });
     return normalizeCart(data);
   },
@@ -227,7 +212,6 @@ export const api = {
       body: payload,
       withCartToken: true,
       allowMissingCartToken: true,
-      withCurrency: true,
     });
     return normalizeCart(data);
   },
@@ -237,7 +221,6 @@ export const api = {
       method: 'PATCH',
       body: { quantity: Number(input.quantity) },
       withCartToken: true,
-      withCurrency: true,
     });
     return normalizeCart(data);
   },
@@ -246,7 +229,6 @@ export const api = {
     const { data } = await requestJson<Cart>(`/api/cart/items/${itemId}`, {
       method: 'DELETE',
       withCartToken: true,
-      withCurrency: true,
     });
     return normalizeCart(data);
   },
@@ -256,18 +238,17 @@ export const api = {
       method: 'POST',
       body: input,
       withCartToken: true,
-      withCurrency: true,
     });
     return normalizeOrder(data);
   },
 
   async getOrder(orderId: number | string): Promise<Order> {
-    const { data } = await requestJson<Order>(`/api/orders/${orderId}`, { withCurrency: true });
+    const { data } = await requestJson<Order>(`/api/orders/${orderId}`);
     return normalizeOrder(data);
   },
 
-  async payOrder(orderId: number | string): Promise<PaymentConfirm> {
-    const { data } = await requestJson<PaymentConfirm>(`/api/orders/${orderId}/payment`, {
+  async payOrder(orderId: number | string): Promise<PaymentInit> {
+    const { data } = await requestJson<PaymentInit>(`/api/orders/${orderId}/payment`, {
       method: 'POST',
     });
     return data;

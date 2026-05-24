@@ -4,7 +4,7 @@ import { api } from '../api';
 import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
 import { StateBlock } from '../components/State';
-import { useCryptoCloudPayment, isOrderPaid } from '../hooks/useCryptoCloudPayment';
+import { isOrderPaid, useOrderPayment } from '../hooks/useOrderPayment';
 import { useI18n } from '../i18n';
 import type { ShippingAddress } from '../types';
 import { extractApiError, formatPrice } from '../utils';
@@ -27,7 +27,7 @@ export const OrderPage = () => {
   const { currency } = useCurrency();
   const params = useParams();
   const orderId = Number(params.id);
-  const cryptoPay = useCryptoCloudPayment();
+  const orderPay = useOrderPayment();
 
   const orderQuery = useQuery({
     queryKey: ['order', orderId, currency],
@@ -57,7 +57,6 @@ export const OrderPage = () => {
   const totalQty = order.lines.reduce((sum, line) => sum + (Number(line.quantity) || 0), 0);
   const orderCurrency = order.currency || order.lines[0]?.currency || 'UAH';
   const paid = isOrderPaid(order.status);
-  const showCryptoPay = cryptoPay.isEnabled && !paid;
 
   return (
     <section className="content">
@@ -134,15 +133,15 @@ export const OrderPage = () => {
         {paid ? <p className="toast success">{t.paymentDone}</p> : null}
 
         <div className="add-row">
-          {showCryptoPay ? (
+          {!paid ? (
             <button
               type="button"
               className="btn btn-primary"
-              onClick={() => cryptoPay.pay(order)}
-              disabled={cryptoPay.isPaying}
+              onClick={() => orderPay.pay(order)}
+              disabled={orderPay.isPaying}
             >
               <Icon name="credit-card-1" />
-              <span>{cryptoPay.isPaying ? t.redirectingToPay : t.payCrypto}</span>
+              <span>{orderPay.isPaying ? t.redirectingToPay : t.payCrypto}</span>
             </button>
           ) : null}
           <Link to="/" className="btn btn-ghost">
@@ -151,11 +150,8 @@ export const OrderPage = () => {
           </Link>
         </div>
 
-        {!cryptoPay.isEnabled && !paid ? (
-          <p className="toast error">{t.cryptoCloudNotConfigured}</p>
-        ) : null}
-        {cryptoPay.error ? (
-          <p className="toast error">{extractApiError(cryptoPay.error)}</p>
+        {orderPay.error ? (
+          <p className="toast error">{extractApiError(orderPay.error)}</p>
         ) : null}
       </article>
     </section>

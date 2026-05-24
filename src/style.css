@@ -575,6 +575,62 @@ img {
   transform: scale(1.04);
 }
 
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.category-pill {
+  border: 1px solid var(--border);
+  background: rgb(20 24 56 / 55%);
+  color: var(--text-muted);
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.category-pill:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.category-pill.active {
+  border-color: rgb(174 249 85 / 55%);
+  color: var(--text);
+  background: rgb(174 249 85 / 12%);
+  box-shadow: var(--shadow-glow);
+}
+
+.product-tag-category {
+  left: auto;
+  right: 0.7rem;
+  background: rgb(22 27 64 / 88%);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.detail-category {
+  display: inline-block;
+  margin: 0 0 0.5rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid rgb(174 249 85 / 35%);
+  border-radius: 999px;
+  background: rgb(174 249 85 / 10%);
+}
+
 .product-tag {
   position: absolute;
   top: 0.7rem;

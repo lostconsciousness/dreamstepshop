@@ -18,6 +18,11 @@ type Messages = {
   productsSoon: string;
   catalogTitle: string;
   catalogSubtitle: string;
+  categoryAll: string;
+  categoryFilterLabel: string;
+  emptyCategory: string;
+  emptyCategoryHint: string;
+  categoryLabel: (category: string) => string;
   priceOnRequest: string;
   viewProduct: string;
   invalidProductId: string;
@@ -69,7 +74,6 @@ type Messages = {
   processing: string;
   payCrypto: string;
   redirectingToPay: string;
-  cryptoCloudNotConfigured: string;
   paymentSuccessTitle: string;
   paymentFailedTitle: string;
   paymentReturnSuccess: string;
@@ -135,6 +139,19 @@ const messages: Record<Language, Messages> = {
     productsSoon: 'New drops coming soon.',
     catalogTitle: 'Dream Step Merch',
     catalogSubtitle: 'Limited drops. Premium quality. For dreamers only.',
+    categoryAll: 'All',
+    categoryFilterLabel: 'Categories',
+    emptyCategory: 'No items in this category',
+    emptyCategoryHint: 'Pick another category or browse the full catalog.',
+    categoryLabel: (category) => {
+      const labels: Record<string, string> = {
+        Одежда: 'Clothing',
+        Обувь: 'Footwear',
+        Аксессуары: 'Accessories',
+        Посуда: 'Drinkware',
+      };
+      return labels[category] ?? category;
+    },
     priceOnRequest: 'On request',
     viewProduct: 'View',
     invalidProductId: 'Invalid product id',
@@ -200,8 +217,6 @@ const messages: Record<Language, Messages> = {
     processing: 'Processing...',
     payCrypto: 'Pay with crypto',
     redirectingToPay: 'Redirecting to payment…',
-    cryptoCloudNotConfigured:
-      'Online payment is not configured. Add VITE_CRYPTOCLOUD_API_KEY and VITE_CRYPTOCLOUD_SHOP_ID.',
     paymentSuccessTitle: 'Payment successful',
     paymentFailedTitle: 'Payment not completed',
     paymentReturnSuccess:
@@ -253,6 +268,19 @@ const messages: Record<Language, Messages> = {
     productsSoon: 'Новые дропы скоро.',
     catalogTitle: 'Мерч Dream Step',
     catalogSubtitle: 'Лимитированные дропы. Премиум качество. Только для своих.',
+    categoryAll: 'Все',
+    categoryFilterLabel: 'Категории',
+    emptyCategory: 'В этой категории пока пусто',
+    emptyCategoryHint: 'Выбери другую категорию или смотри весь каталог.',
+    categoryLabel: (category) => {
+      const labels: Record<string, string> = {
+        Одежда: 'Одежда',
+        Обувь: 'Обувь',
+        Аксессуары: 'Аксессуары',
+        Посуда: 'Посуда',
+      };
+      return labels[category] ?? category;
+    },
     priceOnRequest: 'По запросу',
     viewProduct: 'Открыть',
     invalidProductId: 'Неверный идентификатор товара',
@@ -318,8 +346,6 @@ const messages: Record<Language, Messages> = {
     processing: 'Обрабатываем...',
     payCrypto: 'Оплатить криптой',
     redirectingToPay: 'Переход к оплате…',
-    cryptoCloudNotConfigured:
-      'Онлайн-оплата не настроена. Укажите VITE_CRYPTOCLOUD_API_KEY и VITE_CRYPTOCLOUD_SHOP_ID.',
     paymentSuccessTitle: 'Оплата прошла',
     paymentFailedTitle: 'Оплата не завершена',
     paymentReturnSuccess:

@@ -15,6 +15,8 @@ export type Product = {
   slug: string;
   description: string | null;
   image_url: string | null;
+  category: string | null;
+  is_active: boolean;
   variants: ProductVariant[];
 };
 
@@ -82,9 +84,11 @@ export type Order = {
   lines: OrderLine[];
 };
 
-export type PaymentConfirm = {
+export type PaymentInit = {
   order_id: number;
   status: string;
+  payment_url: string | null;
+  invoice_uuid: string | null;
   message: string;
 };
 

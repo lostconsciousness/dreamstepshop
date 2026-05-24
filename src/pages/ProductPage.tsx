@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api';
+import type { ProductCategory } from '../categories';
 import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
 import { StateBlock } from '../components/State';
 import { useI18n } from '../i18n';
+import { getProductImageSrc, PRODUCT_PLACEHOLDER_IMAGE } from '../media';
 import { extractApiError, formatPrice, toNumber } from '../utils';
-
-const PLACEHOLDER_IMAGE =
-  'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=1400&q=80';
 
 type Feedback = {
   tone: 'success' | 'error';
@@ -106,12 +105,20 @@ export const ProductPage = () => {
       <article className="product-detail">
         <div className="detail-image-wrap">
           <img
-            src={product.image_url ?? PLACEHOLDER_IMAGE}
+            src={getProductImageSrc(product.image_url)}
             alt={product.name}
             className="detail-image"
+            onError={(event) => {
+              event.currentTarget.src = PRODUCT_PLACEHOLDER_IMAGE;
+            }}
           />
         </div>
         <div className="detail-content">
+          {product.category ? (
+            <span className="detail-category">
+              {t.categoryLabel(product.category as ProductCategory)}
+            </span>
+          ) : null}
           <h1 className="detail-title">{product.name}</h1>
           {product.description ? (
             <p className="detail-description">{product.description}</p>
