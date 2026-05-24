@@ -1,7 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { api, getStoredCartToken, setStoredCartToken } from '../api';
+import { api, getStoredCartToken } from '../api';
 import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
 import { StateBlock } from '../components/State';
@@ -40,8 +40,6 @@ export const CheckoutPage = () => {
     mutationFn: api.checkout,
     onSuccess: (order) => {
       setFormError(null);
-      setStoredCartToken(null);
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
       queryClient.setQueryData(['order', order.id, currency], order);
       if (isCryptoCloudEnabled()) {
         cryptoPay.pay(order);

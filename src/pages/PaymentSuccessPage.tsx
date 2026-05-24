@@ -1,4 +1,7 @@
+import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Link, useSearchParams } from 'react-router-dom';
+import { setStoredCartToken } from '../api';
 import { Icon } from '../components/Icon';
 import { StateBlock } from '../components/State';
 import { parseOrderIdFromPaymentReturn } from '../cryptocloudUrls';
@@ -6,8 +9,14 @@ import { useI18n } from '../i18n';
 
 export const PaymentSuccessPage = () => {
   const { t } = useI18n();
+  const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const orderId = parseOrderIdFromPaymentReturn(searchParams);
+
+  useEffect(() => {
+    setStoredCartToken(null);
+    queryClient.removeQueries({ queryKey: ['cart'] });
+  }, [queryClient]);
 
   return (
     <StateBlock
