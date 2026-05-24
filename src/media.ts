@@ -12,6 +12,11 @@ export const resolveProductImageUrl = (imageUrl: string | null | undefined): str
   if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith('data:')) {
     return trimmed;
   }
+  // Catalog images are deployed with the frontend static assets.
+  // Keep `/static/...` on current origin (workers.dev in production).
+  if (trimmed.startsWith('/static/') || trimmed.startsWith('static/')) {
+    return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  }
   const base = API_BASE_URL;
   const path = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
   return `${base}${path}`;
