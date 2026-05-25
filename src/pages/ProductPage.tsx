@@ -8,7 +8,7 @@ import { Icon } from '../components/Icon';
 import { StateBlock } from '../components/State';
 import { useI18n } from '../i18n';
 import { getProductImageSrc, PRODUCT_PLACEHOLDER_IMAGE } from '../media';
-import { extractApiError, formatPrice, toNumber } from '../utils';
+import { extractApiError, formatPriceWithDiscount, toNumber } from '../utils';
 
 type Feedback = {
   tone: 'success' | 'error';
@@ -126,7 +126,7 @@ export const ProductPage = () => {
 
           {selectedVariant ? (
             <p className="price price-strong">
-              {formatPrice(selectedVariant.price, variantCurrency)}
+              {formatPriceWithDiscount(selectedVariant.price, variantCurrency)}
             </p>
           ) : null}
 
@@ -144,7 +144,9 @@ export const ProductPage = () => {
                   onClick={() => setSelectedVariantId(variant.id)}
                 >
                   <span className="chip-size">{variant.size}</span>
-                  <span className="chip-meta">{formatPrice(variant.price, variant.currency)}</span>
+                  <span className="chip-meta">
+                    {formatPriceWithDiscount(variant.price, variant.currency)}
+                  </span>
                 </button>
               );
             })}
@@ -205,7 +207,7 @@ export const ProductPage = () => {
                       ? t.adding
                       : selectedVariant.stock <= 0
                         ? t.outOfStockShort
-                        : `${t.addToCart} · ${formatPrice(
+                        : `${t.addToCart} · ${formatPriceWithDiscount(
                             toNumber(selectedVariant.price) * quantity,
                             variantCurrency,
                           )}`}

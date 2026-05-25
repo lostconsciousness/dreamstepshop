@@ -31,6 +31,10 @@ export const formatPrice = (value: string | number, currency: string): string =>
   }
 };
 
+export const formatPriceWithDiscount = (value: string | number, currency: string): string => {
+  return `${formatPrice(value, currency)} (-80%)`;
+};
+
 export const toNumber = (value: string | number): number => {
   if (typeof value === 'number') {
     return value;

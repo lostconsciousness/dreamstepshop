@@ -5,13 +5,11 @@ import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
 import { StateBlock } from '../components/State';
 import { useI18n } from '../i18n';
-import { extractApiError, formatPrice } from '../utils';
-
-const PLACEHOLDER_IMAGE =
-  'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80';
+import { getProductImageSrc, PRODUCT_PLACEHOLDER_IMAGE } from '../media';
+import { extractApiError, formatPriceWithDiscount } from '../utils';
 
 export const CartPage = () => {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { currency } = useCurrency();
   const queryClient = useQueryClient();
   const hasToken = Boolean(getStoredCartToken());
@@ -20,6 +18,12 @@ export const CartPage = () => {
     queryKey: ['cart', currency],
     queryFn: api.getCart,
     enabled: hasToken,
+  });
+
+  const productsQuery = useQuery({
+    queryKey: ['products', language],
+    queryFn: () => api.getProducts(language),
+    staleTime: 60_000,
   });
 
   const updateQty = useMutation({
@@ -70,6 +74,14 @@ export const CartPage = () => {
 
   const cart = cartQuery.data;
   const cartLines = cart && Array.isArray(cart.lines) ? cart.lines : [];
+  const imageByVariantId = new Map<number, string | null>();
+  if (productsQuery.data) {
+    for (const product of productsQuery.data) {
+      for (const variant of product.variants) {
+        imageByVariantId.set(variant.id, product.image_url);
+      }
+    }
+  }
 
   if (!cart || cartLines.length === 0) {
     return (
@@ -101,7 +113,15 @@ export const CartPage = () => {
         <div className="cart-list">
           {cartLines.map((line) => (
             <article key={line.id} className="cart-item">
-              <img src={PLACEHOLDER_IMAGE} alt="" aria-hidden className="cart-thumb" />
+              <img
+                src={getProductImageSrc(imageByVariantId.get(line.variant_id))}
+                alt={line.product_name}
+                className="cart-thumb"
+                loading="lazy"
+                onError={(event) => {
+                  event.currentTarget.src = PRODUCT_PLACEHOLDER_IMAGE;
+                }}
+              />
               <div className="cart-item-body">
                 <div className="cart-item-header">
                   <h3 className="cart-item-title">{line.product_name}</h3>
@@ -117,7 +137,8 @@ export const CartPage = () => {
                   </button>
                 </div>
                 <p className="cart-item-meta">
-                  {t.size}: <strong>{line.size}</strong> · {formatPrice(line.unit_price, line.currency)}
+                  {t.size}: <strong>{line.size}</strong> ·{' '}
+                  {formatPriceWithDiscount(line.unit_price, line.currency)}
                 </p>
                 <div className="cart-item-foot">
                   <div className="qty-control" role="group" aria-label={t.quantity}>
@@ -149,7 +170,7 @@ export const CartPage = () => {
                       <Icon name="plus" />
                     </button>
                   </div>
-                  <span className="price">{formatPrice(line.line_total, line.currency)}</span>
+                  <span className="price">{formatPriceWithDiscount(line.line_total, line.currency)}</span>
                 </div>
               </div>
             </article>
@@ -167,7 +188,7 @@ export const CartPage = () => {
           <div className="summary-divider" />
           <div className="summary-row large">
             <span>{t.total}</span>
-            <span className="price">{formatPrice(cart.total, cartCurrency)}</span>
+            <span className="price">{formatPriceWithDiscount(cart.total, cartCurrency)}</span>
           </div>
           <Link to="/checkout" className="btn btn-primary btn-block">
             <Icon name="checkmark-circle" />

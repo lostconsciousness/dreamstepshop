@@ -8,7 +8,7 @@ import { StateBlock } from '../components/State';
 import { useOrderPayment } from '../hooks/useOrderPayment';
 import { useI18n } from '../i18n';
 import type { CheckoutPayload } from '../types';
-import { extractApiError, formatPrice } from '../utils';
+import { extractApiError, formatPriceWithDiscount } from '../utils';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -116,7 +116,7 @@ export const CheckoutPage = () => {
         message={
           paying
             ? t.checkoutRedirectingMessage(order.id)
-            : t.orderCreatedMessage(order.id, formatPrice(order.total, order.currency))
+            : t.orderCreatedMessage(order.id, formatPriceWithDiscount(order.total, order.currency))
         }
         actions={
           paying ? null : (
@@ -310,7 +310,7 @@ export const CheckoutPage = () => {
             <span>
               {checkoutMutation.isPending || orderPay.isPaying
                 ? t.confirmingAndPaying
-                : `${t.confirmAndPay} · ${formatPrice(cart.total, cartCurrency)}`}
+                : `${t.confirmAndPay} · ${formatPriceWithDiscount(cart.total, cartCurrency)}`}
             </span>
           </button>
         </form>
@@ -328,7 +328,9 @@ export const CheckoutPage = () => {
                     {t.size}: <strong>{line.size}</strong> · ×{line.quantity}
                   </p>
                 </div>
-                <p className="order-line-price">{formatPrice(line.line_total, line.currency)}</p>
+                <p className="order-line-price">
+                  {formatPriceWithDiscount(line.line_total, line.currency)}
+                </p>
               </div>
             ))}
           </div>
@@ -339,7 +341,7 @@ export const CheckoutPage = () => {
           </div>
           <div className="summary-row large">
             <span>{t.payNow}</span>
-            <span className="price">{formatPrice(cart.total, cartCurrency)}</span>
+            <span className="price">{formatPriceWithDiscount(cart.total, cartCurrency)}</span>
           </div>
         </aside>
       </div>

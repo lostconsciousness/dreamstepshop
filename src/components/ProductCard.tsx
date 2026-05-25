@@ -3,7 +3,7 @@ import { useI18n } from '../i18n';
 import type { ProductCategory } from '../categories';
 import type { Product } from '../types';
 import { getProductImageSrc, PRODUCT_PLACEHOLDER_IMAGE } from '../media';
-import { formatPrice, toNumber } from '../utils';
+import { formatPriceWithDiscount, toNumber } from '../utils';
 
 const getPriceLabel = (product: Product, fallback: string): string => {
   if (product.variants.length === 0) {
@@ -14,9 +14,9 @@ const getPriceLabel = (product: Product, fallback: string): string => {
   const min = Math.min(...prices);
   const max = Math.max(...prices);
   if (min === max) {
-    return formatPrice(min, currency);
+    return formatPriceWithDiscount(min, currency);
   }
-  return `${formatPrice(min, currency)} — ${formatPrice(max, currency)}`;
+  return `${formatPriceWithDiscount(min, currency)} — ${formatPriceWithDiscount(max, currency)}`;
 };
 
 export const ProductCard = ({ product, index = 0 }: { product: Product; index?: number }) => {

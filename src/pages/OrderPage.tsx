@@ -7,7 +7,7 @@ import { StateBlock } from '../components/State';
 import { isOrderPaid, useOrderPayment } from '../hooks/useOrderPayment';
 import { useI18n } from '../i18n';
 import type { ShippingAddress } from '../types';
-import { extractApiError, formatPrice } from '../utils';
+import { extractApiError, formatPriceWithDiscount } from '../utils';
 
 const formatShippingBlock = (s: ShippingAddress): string => {
   const lines: string[] = [s.country];
@@ -111,10 +111,10 @@ export const OrderPage = () => {
                 <p className="order-line-name">{line.product_name}</p>
                 <p className="order-line-meta">
                   {t.size}: <strong>{line.size}</strong> · {line.quantity} ×{' '}
-                  {formatPrice(line.unit_price, line.currency)}
+                  {formatPriceWithDiscount(line.unit_price, line.currency)}
                 </p>
               </div>
-              <p className="order-line-price">{formatPrice(line.line_total, line.currency)}</p>
+              <p className="order-line-price">{formatPriceWithDiscount(line.line_total, line.currency)}</p>
             </div>
           ))}
         </div>
@@ -127,7 +127,7 @@ export const OrderPage = () => {
         </div>
         <div className="summary-row large">
           <span>{t.total}</span>
-          <span className="price">{formatPrice(order.total, orderCurrency)}</span>
+          <span className="price">{formatPriceWithDiscount(order.total, orderCurrency)}</span>
         </div>
 
         {paid ? <p className="toast success">{t.paymentDone}</p> : null}

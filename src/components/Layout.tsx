@@ -1,14 +1,11 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { useCurrency } from '../currency';
 import { useCartSummary } from '../hooks/useCartSummary';
 import { useI18n } from '../i18n';
-import type { Currency } from '../types';
 import { Icon } from './Icon';
 import logoImage from '../assets/logo.png';
 
 export const Layout = () => {
-  const { language, setLanguage, t } = useI18n();
-  const { currency, setCurrency } = useCurrency();
+  const { t } = useI18n();
   const { totalItems } = useCartSummary();
 
   return (
@@ -38,26 +35,6 @@ export const Layout = () => {
           </NavLink>
         </nav>
 
-        <div className="topbar-controls">
-          <label className="lang-switch" aria-label={t.currencyLabel}>
-            <select
-              value={currency}
-              onChange={(event) => setCurrency(event.target.value as Currency)}
-            >
-              <option value="usd">USD $</option>
-              <option value="eur">EUR €</option>
-            </select>
-          </label>
-          <label className="lang-switch" aria-label={t.languageLabel}>
-            <select
-              value={language}
-              onChange={(event) => setLanguage(event.target.value as 'en' | 'ru')}
-            >
-              <option value="en">EN</option>
-              <option value="ru">RU</option>
-            </select>
-          </label>
-        </div>
       </header>
 
       <main className="content">
