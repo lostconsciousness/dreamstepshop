@@ -254,6 +254,7 @@ export const CheckoutPage = () => {
                 autoComplete="off"
                 maxLength={64}
               />
+              <p className="input-hint">{t.telegramCoinsHint}</p>
             </label>
           </div>
 

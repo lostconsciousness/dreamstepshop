@@ -49,6 +49,9 @@ export const CatalogPage = () => {
             <li>
               <Icon name="timer" /> {t.fastDelivery}
             </li>
+            <li>
+              <Icon name="gift-1" /> {t.telegramCoinsReward}
+            </li>
           </ul>
         </div>
       </section>

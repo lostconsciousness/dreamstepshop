@@ -1001,6 +1001,13 @@ img {
   box-shadow: 0 0 0 3px rgb(174 249 85 / 22%);
 }
 
+.input-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
 /* ---------- Cart ---------- */
 
 .cart-layout {

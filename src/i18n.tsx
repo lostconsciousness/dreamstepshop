@@ -97,6 +97,8 @@ type Messages = {
   phonePlaceholder: string;
   phoneLabel: string;
   telegramLabel: string;
+  telegramCoinsReward: string;
+  telegramCoinsHint: string;
   invalidTelegram: string;
   recipientNameLabel: string;
   sectionContact: string;
@@ -195,6 +197,8 @@ const messages: Record<Language, Messages> = {
     checkoutSubtitle: 'Enter your contact details and full delivery address for shipping.',
     phoneLabel: 'Phone',
     telegramLabel: 'Telegram username (optional)',
+    telegramCoinsReward: 'Add Telegram at checkout — get 70,000 coins',
+    telegramCoinsHint: 'Enter your @username to receive 70,000 Dream Step coins as a reward.',
     invalidTelegram: 'Telegram username must be 64 characters or less.',
     recipientNameLabel: 'Recipient full name',
     sectionContact: 'Contact',
