@@ -1,23 +1,11 @@
 import { Link } from 'react-router-dom';
+import { DiscountBadge } from './DiscountBadge';
+import { PriceDisplay } from './PriceDisplay';
 import { useI18n } from '../i18n';
 import type { ProductCategory } from '../categories';
 import type { Product } from '../types';
 import { getProductImageSrc, PRODUCT_PLACEHOLDER_IMAGE } from '../media';
-import { formatPriceWithDiscount, toNumber } from '../utils';
-
-const getPriceLabel = (product: Product, fallback: string): string => {
-  if (product.variants.length === 0) {
-    return fallback;
-  }
-  const currency = product.variants[0]?.currency ?? 'UAH';
-  const prices = product.variants.map((variant) => toNumber(variant.price));
-  const min = Math.min(...prices);
-  const max = Math.max(...prices);
-  if (min === max) {
-    return formatPriceWithDiscount(min, currency);
-  }
-  return `${formatPriceWithDiscount(min, currency)} — ${formatPriceWithDiscount(max, currency)}`;
-};
+import { toNumber } from '../utils';
 
 export const ProductCard = ({ product, index = 0 }: { product: Product; index?: number }) => {
   const { t } = useI18n();
@@ -26,10 +14,16 @@ export const ProductCard = ({ product, index = 0 }: { product: Product; index?: 
     ? t.categoryLabel(product.category as ProductCategory)
     : null;
 
+  const prices = product.variants.map((variant) => toNumber(variant.price));
+  const currency = product.variants[0]?.currency ?? 'USD';
+  const min = prices.length ? Math.min(...prices) : null;
+  const max = prices.length ? Math.max(...prices) : null;
+
   return (
     <Link to={`/products/${product.id}`} className="product-card" aria-label={product.name}>
       <div className="product-image-wrap">
-        {isNew ? <span className="product-tag">{t.heroBadge}</span> : null}
+        <DiscountBadge />
+        {isNew ? <span className="product-tag product-tag-new">{t.heroBadge}</span> : null}
         {categoryLabel ? (
           <span className="product-tag product-tag-category">{categoryLabel}</span>
         ) : null}
@@ -45,7 +39,19 @@ export const ProductCard = ({ product, index = 0 }: { product: Product; index?: 
       </div>
       <div className="product-card-content">
         <h3>{product.name}</h3>
-        <p className="price">{getPriceLabel(product, t.priceOnRequest)}</p>
+        {min !== null && max !== null ? (
+          <div className="price-row">
+            <PriceDisplay value={min} currency={currency} />
+            {min !== max ? (
+              <>
+                <span className="price-range-sep">—</span>
+                <PriceDisplay value={max} currency={currency} size="sm" />
+              </>
+            ) : null}
+          </div>
+        ) : (
+          <p className="muted">{t.priceOnRequest}</p>
+        )}
       </div>
     </Link>
   );

@@ -4,11 +4,13 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api';
 import type { ProductCategory } from '../categories';
 import { useCurrency } from '../currency';
+import { DiscountBadge } from '../components/DiscountBadge';
 import { Icon } from '../components/Icon';
+import { PriceDisplay } from '../components/PriceDisplay';
 import { StateBlock } from '../components/State';
 import { useI18n } from '../i18n';
 import { getProductImageSrc, PRODUCT_PLACEHOLDER_IMAGE } from '../media';
-import { extractApiError, formatPriceWithDiscount, toNumber } from '../utils';
+import { extractApiError, formatPrice, toNumber } from '../utils';
 
 type Feedback = {
   tone: 'success' | 'error';
@@ -104,6 +106,7 @@ export const ProductPage = () => {
 
       <article className="product-detail">
         <div className="detail-image-wrap">
+          <DiscountBadge />
           <img
             src={getProductImageSrc(product.image_url)}
             alt={product.name}
@@ -125,9 +128,12 @@ export const ProductPage = () => {
           ) : null}
 
           {selectedVariant ? (
-            <p className="price price-strong">
-              {formatPriceWithDiscount(selectedVariant.price, variantCurrency)}
-            </p>
+            <PriceDisplay
+              value={selectedVariant.price}
+              currency={variantCurrency}
+              size="lg"
+              className="price-strong"
+            />
           ) : null}
 
           <span className="field-label">{t.chooseSize}</span>
@@ -145,7 +151,7 @@ export const ProductPage = () => {
                 >
                   <span className="chip-size">{variant.size}</span>
                   <span className="chip-meta">
-                    {formatPriceWithDiscount(variant.price, variant.currency)}
+                    <PriceDisplay value={variant.price} currency={variant.currency} size="sm" />
                   </span>
                 </button>
               );
@@ -207,7 +213,7 @@ export const ProductPage = () => {
                       ? t.adding
                       : selectedVariant.stock <= 0
                         ? t.outOfStockShort
-                        : `${t.addToCart} · ${formatPriceWithDiscount(
+                        : `${t.addToCart} · ${formatPrice(
                             toNumber(selectedVariant.price) * quantity,
                             variantCurrency,
                           )}`}

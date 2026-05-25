@@ -610,11 +610,35 @@ img {
 }
 
 .product-tag-category {
-  left: auto;
-  right: 0.7rem;
+  top: auto;
+  bottom: 0.65rem;
+  left: 0.65rem;
+  right: auto;
+  z-index: 1;
   background: rgb(22 27 64 / 88%);
   border: 1px solid var(--border);
   color: var(--text-muted);
+}
+
+.product-tag-new {
+  top: 0.7rem;
+  left: 0.7rem;
+  z-index: 1;
+}
+
+.product-tag-discount {
+  top: 0.65rem;
+  right: 0.65rem;
+  left: auto;
+  z-index: 2;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: linear-gradient(135deg, #ff7a59 0%, #ff4d6d 100%);
+  border: 1px solid rgb(255 130 110 / 55%);
+  box-shadow: 0 6px 18px rgb(255 80 70 / 35%);
 }
 
 .detail-category {
@@ -670,6 +694,57 @@ img {
   letter-spacing: -0.01em;
 }
 
+.price-display {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.price-display-sale {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--accent-warm);
+  letter-spacing: -0.01em;
+}
+
+.price-display-original {
+  font-weight: 500;
+  color: var(--text-dim);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  font-size: 0.88em;
+}
+
+.price-display--sm .price-display-sale {
+  font-size: 0.92rem;
+}
+
+.price-display--sm .price-display-original {
+  font-size: 0.78rem;
+}
+
+.price-display--lg .price-display-sale {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 1.45rem;
+}
+
+.price-display--lg .price-display-original {
+  font-size: 1rem;
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+}
+
+.price-range-sep {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
 .price-strong {
   font-family: 'Space Grotesk', 'Inter', sans-serif;
   font-size: 1.4rem;
@@ -713,6 +788,7 @@ img {
 }
 
 .detail-image-wrap {
+  position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
   background:
@@ -1145,6 +1221,27 @@ img {
 .order-line-meta {
   color: var(--text-muted);
   font-size: 0.84rem;
+}
+
+.order-line-price,
+.order-line > .price-display {
+  justify-self: end;
+  align-self: start;
+  text-align: right;
+}
+
+.summary-row.large .price-display-sale {
+  font-size: 1.15rem;
+}
+
+.chip-meta .price-display {
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.chip-meta .price-display-original {
+  font-size: 0.72rem;
 }
 
 .order-line-price {

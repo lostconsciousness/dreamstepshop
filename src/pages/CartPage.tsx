@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { api, getStoredCartToken } from '../api';
 import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
+import { PriceDisplay } from '../components/PriceDisplay';
 import { StateBlock } from '../components/State';
 import { useI18n } from '../i18n';
 import { getProductImageSrc, PRODUCT_PLACEHOLDER_IMAGE } from '../media';
-import { extractApiError, formatPriceWithDiscount } from '../utils';
+import { extractApiError } from '../utils';
 
 export const CartPage = () => {
   const { t, language } = useI18n();
@@ -138,7 +139,7 @@ export const CartPage = () => {
                 </div>
                 <p className="cart-item-meta">
                   {t.size}: <strong>{line.size}</strong> ·{' '}
-                  {formatPriceWithDiscount(line.unit_price, line.currency)}
+                  <PriceDisplay value={line.unit_price} currency={line.currency} size="sm" />
                 </p>
                 <div className="cart-item-foot">
                   <div className="qty-control" role="group" aria-label={t.quantity}>
@@ -170,7 +171,7 @@ export const CartPage = () => {
                       <Icon name="plus" />
                     </button>
                   </div>
-                  <span className="price">{formatPriceWithDiscount(line.line_total, line.currency)}</span>
+                  <PriceDisplay value={line.line_total} currency={line.currency} />
                 </div>
               </div>
             </article>
@@ -188,7 +189,7 @@ export const CartPage = () => {
           <div className="summary-divider" />
           <div className="summary-row large">
             <span>{t.total}</span>
-            <span className="price">{formatPriceWithDiscount(cart.total, cartCurrency)}</span>
+            <PriceDisplay value={cart.total} currency={cartCurrency} />
           </div>
           <Link to="/checkout" className="btn btn-primary btn-block">
             <Icon name="checkmark-circle" />

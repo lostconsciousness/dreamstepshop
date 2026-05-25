@@ -3,11 +3,12 @@ import { Link, useParams } from 'react-router-dom';
 import { api } from '../api';
 import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
+import { PriceDisplay } from '../components/PriceDisplay';
 import { StateBlock } from '../components/State';
 import { isOrderPaid, useOrderPayment } from '../hooks/useOrderPayment';
 import { useI18n } from '../i18n';
 import type { ShippingAddress } from '../types';
-import { extractApiError, formatPriceWithDiscount } from '../utils';
+import { extractApiError } from '../utils';
 
 const formatShippingBlock = (s: ShippingAddress): string => {
   const lines: string[] = [s.country];
@@ -111,10 +112,10 @@ export const OrderPage = () => {
                 <p className="order-line-name">{line.product_name}</p>
                 <p className="order-line-meta">
                   {t.size}: <strong>{line.size}</strong> · {line.quantity} ×{' '}
-                  {formatPriceWithDiscount(line.unit_price, line.currency)}
+                  <PriceDisplay value={line.unit_price} currency={line.currency} size="sm" />
                 </p>
               </div>
-              <p className="order-line-price">{formatPriceWithDiscount(line.line_total, line.currency)}</p>
+              <PriceDisplay value={line.line_total} currency={line.currency} size="sm" />
             </div>
           ))}
         </div>
@@ -127,7 +128,7 @@ export const OrderPage = () => {
         </div>
         <div className="summary-row large">
           <span>{t.total}</span>
-          <span className="price">{formatPriceWithDiscount(order.total, orderCurrency)}</span>
+          <PriceDisplay value={order.total} currency={orderCurrency} />
         </div>
 
         {paid ? <p className="toast success">{t.paymentDone}</p> : null}
