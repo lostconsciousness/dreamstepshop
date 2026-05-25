@@ -69,6 +69,7 @@ export type CheckoutPayload = {
     address_line: string;
   };
   shipping_notes: string | null;
+  telegram_username: string | null;
 };
 
 export type Order = {
@@ -78,6 +79,7 @@ export type Order = {
   recipient_name: string | null;
   shipping: ShippingAddress | null;
   shipping_notes: string | null;
+  telegram_username: string | null;
   status: string;
   total: string;
   currency: string;

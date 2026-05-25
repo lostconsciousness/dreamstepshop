@@ -89,7 +89,6 @@ type Messages = {
   languageLabel: string;
   currencyLabel: string;
   items: string;
-  freeShipping: string;
   authentic: string;
   fastDelivery: string;
   yourSelection: string;
@@ -97,6 +96,8 @@ type Messages = {
   emailPlaceholder: string;
   phonePlaceholder: string;
   phoneLabel: string;
+  telegramLabel: string;
+  invalidTelegram: string;
   recipientNameLabel: string;
   sectionContact: string;
   sectionShipping: string;
@@ -117,6 +118,7 @@ type Messages = {
     address: string;
     recipient: string;
     notes: string;
+    telegram: string;
   };
   orderCreatedMessage: (id: number, total: string) => string;
   itemsCount: (n: number) => string;
@@ -192,6 +194,8 @@ const messages: Record<Language, Messages> = {
     checkoutTitle: 'Checkout',
     checkoutSubtitle: 'Enter your contact details and full delivery address for shipping.',
     phoneLabel: 'Phone',
+    telegramLabel: 'Telegram username (optional)',
+    invalidTelegram: 'Telegram username must be 64 characters or less.',
     recipientNameLabel: 'Recipient full name',
     sectionContact: 'Contact',
     sectionShipping: 'Shipping address',
@@ -237,7 +241,6 @@ const messages: Record<Language, Messages> = {
     languageLabel: 'Language',
     currencyLabel: 'Currency',
     items: 'items',
-    freeShipping: 'Free shipping over ₴1500',
     authentic: '100% authentic merch',
     fastDelivery: 'Worldwide shipping',
     yourSelection: 'Your selection',
@@ -252,6 +255,7 @@ const messages: Record<Language, Messages> = {
       address: 'Street, house, apt, entrance, floor',
       recipient: 'First and last name',
       notes: 'Courier instructions, preferred time…',
+      telegram: '@yourusername',
     },
     itemsCount: (n) => (n === 1 ? '1 item' : `${n} items`),
     orderCreatedMessage: (id, total) => `Order #${id} confirmed. Total: ${total}.`,

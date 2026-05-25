@@ -88,6 +88,12 @@ export const OrderPage = () => {
               {order.phone}
             </p>
           ) : null}
+          {order.telegram_username ? (
+            <p>
+              <span className="muted">{t.telegramLabel}</span>
+              {order.telegram_username}
+            </p>
+          ) : null}
         </div>
 
         {order.shipping ? (

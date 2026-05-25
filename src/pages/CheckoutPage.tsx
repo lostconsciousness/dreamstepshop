@@ -13,6 +13,15 @@ import { extractApiError, formatPrice } from '../utils';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const normalizeTelegramUsername = (value: string): string | null => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+  const username = trimmed.startsWith('@') ? trimmed : `@${trimmed}`;
+  return username.length <= 64 ? username : null;
+};
+
 export const CheckoutPage = () => {
   const { t } = useI18n();
   const { currency } = useCurrency();
@@ -27,6 +36,7 @@ export const CheckoutPage = () => {
   const [postalCode, setPostalCode] = useState('');
   const [addressLine, setAddressLine] = useState('');
   const [shippingNotes, setShippingNotes] = useState('');
+  const [telegramUsername, setTelegramUsername] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const orderPay = useOrderPayment();
 
@@ -72,6 +82,12 @@ export const CheckoutPage = () => {
 
     const regionTrim = region.trim();
     const notesTrim = shippingNotes.trim();
+    const telegram = normalizeTelegramUsername(telegramUsername);
+
+    if (telegramUsername.trim() && !telegram) {
+      setFormError(t.invalidTelegram);
+      return;
+    }
 
     const payload: CheckoutPayload = {
       email: email.trim(),
@@ -85,6 +101,7 @@ export const CheckoutPage = () => {
         address_line: addressTrim,
       },
       shipping_notes: notesTrim ? notesTrim : null,
+      telegram_username: telegram,
     };
 
     checkoutMutation.mutate(payload);
@@ -225,6 +242,17 @@ export const CheckoutPage = () => {
                 placeholder={t.placeholders.recipient}
                 autoComplete="name"
                 required
+              />
+            </label>
+            <label className="input-group">
+              <span>{t.telegramLabel}</span>
+              <input
+                type="text"
+                value={telegramUsername}
+                onChange={(event) => setTelegramUsername(event.target.value)}
+                placeholder={t.placeholders.telegram}
+                autoComplete="off"
+                maxLength={64}
               />
             </label>
           </div>

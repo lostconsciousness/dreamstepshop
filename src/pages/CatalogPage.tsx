@@ -44,9 +44,6 @@ export const CatalogPage = () => {
           </div>
           <ul className="hero-perks">
             <li>
-              <Icon name="delivery" /> {t.freeShipping}
-            </li>
-            <li>
               <Icon name="shield-1" /> {t.authentic}
             </li>
             <li>
