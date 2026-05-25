@@ -11,11 +11,11 @@ import { useI18n } from '../i18n';
 import { extractApiError } from '../utils';
 
 export const CatalogPage = () => {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory | null>(null);
   const productsQuery = useQuery({
-    queryKey: ['products'],
-    queryFn: api.getProducts,
+    queryKey: ['products', language],
+    queryFn: () => api.getProducts(language),
   });
 
   const categories = useMemo(

@@ -1,5 +1,6 @@
 import { API_BASE_URL } from './config';
 import { resolveProductImageUrl } from './media';
+import type { Language } from './i18n';
 import type {
   ApiErrorResponse,
   Cart,
@@ -181,13 +182,17 @@ export const api = {
     return data;
   },
 
-  async getProducts(): Promise<Product[]> {
-    const { data } = await requestJson<Product[]>('/api/products');
+  async getProducts(lang: Language): Promise<Product[]> {
+    const { data } = await requestJson<Product[]>(
+      `/api/products?lang=${encodeURIComponent(lang)}`,
+    );
     return Array.isArray(data) ? data.map(normalizeProduct).filter((p) => p.is_active) : [];
   },
 
-  async getProduct(id: number | string): Promise<Product> {
-    const { data } = await requestJson<Product>(`/api/products/${id}`);
+  async getProduct(id: number | string, lang: Language): Promise<Product> {
+    const { data } = await requestJson<Product>(
+      `/api/products/${id}?lang=${encodeURIComponent(lang)}`,
+    );
     const product = normalizeProduct(data);
     if (!product.is_active) {
       throw new Error('Product is not available.');

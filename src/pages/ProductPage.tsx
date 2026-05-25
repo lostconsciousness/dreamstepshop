@@ -16,7 +16,7 @@ type Feedback = {
 };
 
 export const ProductPage = () => {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { currency } = useCurrency();
   const params = useParams();
   const navigate = useNavigate();
@@ -27,8 +27,8 @@ export const ProductPage = () => {
   const [feedback, setFeedback] = useState<Feedback | null>(null);
 
   const productQuery = useQuery({
-    queryKey: ['product', productId, currency],
-    queryFn: () => api.getProduct(productId),
+    queryKey: ['product', productId, currency, language],
+    queryFn: () => api.getProduct(productId, language),
     enabled: Number.isFinite(productId),
   });
 
