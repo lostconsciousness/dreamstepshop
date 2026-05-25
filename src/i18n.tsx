@@ -149,6 +149,10 @@ const messages: Record<Language, Messages> = {
         Обувь: 'Footwear',
         Аксессуары: 'Accessories',
         Посуда: 'Drinkware',
+        Apparel: 'Clothing',
+        Shoes: 'Footwear',
+        Accessories: 'Accessories',
+        Drinkware: 'Drinkware',
       };
       return labels[category] ?? category;
     },
@@ -278,6 +282,10 @@ const messages: Record<Language, Messages> = {
         Обувь: 'Обувь',
         Аксессуары: 'Аксессуары',
         Посуда: 'Посуда',
+        Apparel: 'Одежда',
+        Shoes: 'Обувь',
+        Accessories: 'Аксессуары',
+        Drinkware: 'Посуда',
       };
       return labels[category] ?? category;
     },

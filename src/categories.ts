@@ -1,19 +1,11 @@
 import type { Product } from './types';
 
-/** Category slugs from API `ProductOut.category`. */
-export const PRODUCT_CATEGORIES = ['Одежда', 'Обувь', 'Аксессуары', 'Посуда'] as const;
-
-export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
-
-export const isProductCategory = (value: string): value is ProductCategory => {
-  return (PRODUCT_CATEGORIES as readonly string[]).includes(value);
-};
+export type ProductCategory = string;
 
 export const getCategoriesFromProducts = (products: Product[]): ProductCategory[] => {
-  const present = new Set(
-    products.map((p) => p.category).filter((c): c is string => Boolean(c && isProductCategory(c))),
+  return Array.from(
+    new Set(products.map((p) => p.category?.trim()).filter((c): c is string => Boolean(c))),
   );
-  return PRODUCT_CATEGORIES.filter((c) => present.has(c));
 };
 
 export const filterProductsByCategory = (
