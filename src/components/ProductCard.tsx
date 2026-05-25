@@ -22,11 +22,10 @@ export const ProductCard = ({ product, index = 0 }: { product: Product; index?: 
   return (
     <Link to={`/products/${product.id}`} className="product-card" aria-label={product.name}>
       <div className="product-image-wrap">
-        <DiscountBadge />
-        {isNew ? <span className="product-tag product-tag-new">{t.heroBadge}</span> : null}
-        {categoryLabel ? (
-          <span className="product-tag product-tag-category">{categoryLabel}</span>
-        ) : null}
+        <div className="product-image-badges">
+          {isNew ? <span className="product-badge product-badge--new">{t.heroBadge}</span> : null}
+          <DiscountBadge />
+        </div>
         <img
           src={getProductImageSrc(product.image_url)}
           alt={product.name}
@@ -38,6 +37,7 @@ export const ProductCard = ({ product, index = 0 }: { product: Product; index?: 
         />
       </div>
       <div className="product-card-content">
+        {categoryLabel ? <span className="product-card-category">{categoryLabel}</span> : null}
         <h3>{product.name}</h3>
         {min !== null && max !== null ? (
           <div className="price-row">

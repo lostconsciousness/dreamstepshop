@@ -5,6 +5,10 @@ type DiscountBadgeProps = {
 };
 
 export const DiscountBadge = ({ className }: DiscountBadgeProps) => {
-  const classes = ['product-tag', 'product-tag-discount', className].filter(Boolean).join(' ');
-  return <span className={classes}>-{DISCOUNT_PERCENT}%</span>;
+  const classes = ['discount-badge', className].filter(Boolean).join(' ');
+  return (
+    <span className={classes} aria-label={`${DISCOUNT_PERCENT}% off`}>
+      -{DISCOUNT_PERCENT}%
+    </span>
+  );
 };

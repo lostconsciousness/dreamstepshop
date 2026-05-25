@@ -106,7 +106,9 @@ export const ProductPage = () => {
 
       <article className="product-detail">
         <div className="detail-image-wrap">
-          <DiscountBadge />
+          <div className="product-image-badges">
+            <DiscountBadge />
+          </div>
           <img
             src={getProductImageSrc(product.image_url)}
             alt={product.name}
