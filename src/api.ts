@@ -1,5 +1,6 @@
 import { API_BASE_URL } from './config';
 import { resolveProductImageUrl } from './media';
+import { repairMojibake } from './text';
 import type { Language } from './i18n';
 import type {
   ApiErrorResponse,
@@ -144,14 +145,24 @@ async function requestJson<T>(path: string, options: RequestOptions = {}): Promi
 
 const normalizeCart = (cart: Cart): Cart => ({
   ...cart,
-  lines: Array.isArray(cart?.lines) ? cart.lines : [],
+  lines: Array.isArray(cart?.lines)
+    ? cart.lines.map((line) => ({
+        ...line,
+        product_name: repairMojibake(line.product_name) ?? line.product_name,
+      }))
+    : [],
   total: cart?.total ?? '0',
   currency: cart?.currency ?? 'USD',
 });
 
 const normalizeOrder = (order: Order): Order => ({
   ...order,
-  lines: Array.isArray(order?.lines) ? order.lines : [],
+  lines: Array.isArray(order?.lines)
+    ? order.lines.map((line) => ({
+        ...line,
+        product_name: repairMojibake(line.product_name) ?? line.product_name,
+      }))
+    : [],
   total: order?.total ?? '0',
   currency: order?.currency ?? 'USD',
   shipping: order?.shipping
@@ -170,6 +181,8 @@ const normalizeOrder = (order: Order): Order => ({
 
 const normalizeProduct = (product: Product): Product => ({
   ...product,
+  name: repairMojibake(product?.name) ?? product.name,
+  description: repairMojibake(product?.description),
   category: product?.category ?? null,
   is_active: product?.is_active !== false,
   image_url: resolveProductImageUrl(product?.image_url),
