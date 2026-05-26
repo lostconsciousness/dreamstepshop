@@ -1,6 +1,6 @@
 import { API_BASE_URL } from './config';
 import { resolveProductImageUrl } from './media';
-import { repairMojibake } from './text';
+import { repairMojibake, cleanProductNameForDisplay } from './text';
 import type { Language } from './i18n';
 import type {
   ApiErrorResponse,
@@ -148,7 +148,7 @@ const normalizeCart = (cart: Cart): Cart => ({
   lines: Array.isArray(cart?.lines)
     ? cart.lines.map((line) => ({
         ...line,
-        product_name: repairMojibake(line.product_name) ?? line.product_name,
+        product_name: cleanProductNameForDisplay(line.product_name) ?? line.product_name,
       }))
     : [],
   total: cart?.total ?? '0',
@@ -160,7 +160,7 @@ const normalizeOrder = (order: Order): Order => ({
   lines: Array.isArray(order?.lines)
     ? order.lines.map((line) => ({
         ...line,
-        product_name: repairMojibake(line.product_name) ?? line.product_name,
+        product_name: cleanProductNameForDisplay(line.product_name) ?? line.product_name,
       }))
     : [],
   total: order?.total ?? '0',
@@ -181,7 +181,7 @@ const normalizeOrder = (order: Order): Order => ({
 
 const normalizeProduct = (product: Product): Product => ({
   ...product,
-  name: repairMojibake(product?.name) ?? product.name,
+  name: cleanProductNameForDisplay(product?.name) ?? product.name,
   description: repairMojibake(product?.description),
   category: product?.category ?? null,
   is_active: product?.is_active !== false,
