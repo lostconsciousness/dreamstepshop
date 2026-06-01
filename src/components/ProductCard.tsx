@@ -1,58 +1,93 @@
+import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { DiscountBadge } from './DiscountBadge';
-import { PriceDisplay } from './PriceDisplay';
+import { api } from '../api';
+import { useCurrency } from '../currency';
+import { Icon } from './Icon';
 import { useI18n } from '../i18n';
-import type { ProductCategory } from '../categories';
 import type { Product } from '../types';
 import { getProductImageSrc, PRODUCT_PLACEHOLDER_IMAGE } from '../media';
-import { toNumber } from '../utils';
+import { getDefaultVariant, getProductSizeDisplayMode } from '../sizes';
+import { extractApiError } from '../utils';
 
 export const ProductCard = ({ product, index = 0 }: { product: Product; index?: number }) => {
   const { t } = useI18n();
+  const { currency } = useCurrency();
+  const queryClient = useQueryClient();
+  const [feedback, setFeedback] = useState<string | null>(null);
   const isNew = index < 2;
-  const categoryLabel = product.category
-    ? t.categoryLabel(product.category as ProductCategory)
-    : null;
+  const productUrl = `/products/${product.id}`;
 
-  const prices = product.variants.map((variant) => toNumber(variant.price));
-  const currency = product.variants[0]?.currency ?? 'USD';
-  const min = prices.length ? Math.min(...prices) : null;
-  const max = prices.length ? Math.max(...prices) : null;
+  const sizeMode = getProductSizeDisplayMode(product.category);
+  const defaultVariant = getDefaultVariant(product.variants, sizeMode);
+  const canAdd = Boolean(defaultVariant && defaultVariant.stock > 0);
+
+  const addToCartMutation = useMutation({
+    mutationFn: api.addCartItem,
+    onSuccess: (cart) => {
+      setFeedback(t.addedToCart);
+      queryClient.setQueryData(['cart', currency], cart);
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      window.setTimeout(() => setFeedback(null), 2500);
+    },
+    onError: (error) => {
+      setFeedback(extractApiError(error));
+      window.setTimeout(() => setFeedback(null), 3500);
+    },
+  });
+
+  const handleAddToCart = () => {
+    if (!defaultVariant || defaultVariant.stock <= 0) {
+      return;
+    }
+    addToCartMutation.mutate({
+      variant_id: defaultVariant.id,
+      quantity: 1,
+    });
+  };
 
   return (
-    <Link to={`/products/${product.id}`} className="product-card" aria-label={product.name}>
-      <div className="product-image-wrap">
-        <div className="product-image-badges">
-          {isNew ? <span className="product-badge product-badge--new">{t.heroBadge}</span> : null}
-          <DiscountBadge />
-        </div>
-        <img
-          src={getProductImageSrc(product.image_url)}
-          alt={product.name}
-          className="product-image"
-          loading="lazy"
-          onError={(event) => {
-            event.currentTarget.src = PRODUCT_PLACEHOLDER_IMAGE;
-          }}
-        />
-      </div>
-      <div className="product-card-content">
-        {categoryLabel ? <span className="product-card-category">{categoryLabel}</span> : null}
-        <h3>{product.name}</h3>
-        {min !== null && max !== null ? (
-          <div className="price-row">
-            <PriceDisplay value={min} currency={currency} />
-            {min !== max ? (
-              <>
-                <span className="price-range-sep">—</span>
-                <PriceDisplay value={max} currency={currency} size="sm" />
-              </>
-            ) : null}
+    <article className="product-card">
+      <Link to={productUrl} className="product-card-media" aria-label={product.name}>
+        <div className="product-image-wrap">
+          <div className="product-image-badges">
+            {isNew ? <span className="product-badge product-badge--new">{t.heroBadge}</span> : null}
           </div>
-        ) : (
-          <p className="muted">{t.priceOnRequest}</p>
-        )}
+          <img
+            src={getProductImageSrc(product.image_url)}
+            alt={product.name}
+            className="product-image"
+            loading="lazy"
+            onError={(event) => {
+              event.currentTarget.src = PRODUCT_PLACEHOLDER_IMAGE;
+            }}
+          />
+        </div>
+      </Link>
+
+      <div className="product-card-content">
+        <Link to={productUrl} className="product-card-title-link">
+          <h3>{product.name}</h3>
+        </Link>
+
+        <div className="product-card-actions">
+          <button
+            type="button"
+            className="btn btn-primary btn-block product-card-btn"
+            onClick={handleAddToCart}
+            disabled={!canAdd || addToCartMutation.isPending}
+          >
+            <Icon name="cart-plus" />
+            <span>{addToCartMutation.isPending ? t.adding : t.addToCart}</span>
+          </button>
+          <Link to={productUrl} className="btn btn-ghost btn-block product-card-btn">
+            <Icon name="arrow-right" />
+            <span>{t.viewProduct}</span>
+          </Link>
+        </div>
+
+        {feedback ? <p className="product-card-feedback">{feedback}</p> : null}
       </div>
-    </Link>
+    </article>
   );
 };

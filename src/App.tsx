@@ -10,6 +10,10 @@ import { OrderPage } from './pages/OrderPage';
 import { PaymentFailedPage } from './pages/PaymentFailedPage';
 import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
 import { ProductPage } from './pages/ProductPage';
+import { ContactPage } from './pages/ContactPage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { TermsOfServicePage } from './pages/TermsOfServicePage';
+import { PrivacyPolicyRedirect, TermsOfServiceRedirect } from './pages/LegalRedirects';
 
 const RouteErrorElement = () => {
   const { t } = useI18n();
@@ -40,6 +44,11 @@ const router = createBrowserRouter([
       { path: 'orders/:id', element: <OrderPage /> },
       { path: 'payment-success', element: <PaymentSuccessPage /> },
       { path: 'payment-failed', element: <PaymentFailedPage /> },
+      { path: 'contact', element: <ContactPage /> },
+      { path: 'privacy-policy', element: <PrivacyPolicyPage /> },
+      { path: 'terms-of-service', element: <TermsOfServicePage /> },
+      { path: 'privacy', element: <PrivacyPolicyRedirect /> },
+      { path: 'terms', element: <TermsOfServiceRedirect /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

@@ -25,6 +25,12 @@ type Messages = {
   categoryLabel: (category: string) => string;
   priceOnRequest: string;
   viewProduct: string;
+  productAbout: string;
+  productDetails: string;
+  productSku: string;
+  productAvailableSizes: string;
+  productDescriptionFallback: string;
+  officialMerch: string;
   invalidProductId: string;
   loadingProduct: string;
   cannotLoadProduct: string;
@@ -112,6 +118,9 @@ type Messages = {
   notesHeading: string;
   invalidPhone: string;
   fillRequired: string;
+  footerContact: string;
+  footerPrivacy: string;
+  footerTerms: string;
   placeholders: {
     country: string;
     region: string;
@@ -162,6 +171,13 @@ const messages: Record<Language, Messages> = {
     },
     priceOnRequest: 'On request',
     viewProduct: 'View',
+    productAbout: 'About this item',
+    productDetails: 'Product details',
+    productSku: 'SKU',
+    productAvailableSizes: 'Available sizes',
+    productDescriptionFallback:
+      'Official Dream Step merchandise. Premium apparel and accessories from the Dream Step collection.',
+    officialMerch: 'Official Dream Step merch',
     invalidProductId: 'Invalid product id',
     loadingProduct: 'Loading product...',
     cannotLoadProduct: 'Could not load product',
@@ -212,6 +228,9 @@ const messages: Record<Language, Messages> = {
     notesHeading: 'Notes',
     invalidPhone: 'Enter a valid phone number (at least 5 characters).',
     fillRequired: 'Please fill in all required fields.',
+    footerContact: 'Contact',
+    footerPrivacy: 'Privacy Policy',
+    footerTerms: 'Terms of Service',
     payNow: 'To pay',
     confirm: 'Confirm order',
     confirmAndPay: 'Place order and pay',

@@ -41,6 +41,15 @@ export const Layout = () => {
         <Outlet />
       </main>
 
+      <footer className="site-footer">
+        <p className="site-footer-copy">© {new Date().getFullYear()} Dream Step Merch</p>
+        <nav className="site-footer-nav" aria-label="Legal and support">
+          <Link to="/contact">{t.footerContact}</Link>
+          <Link to="/privacy-policy">{t.footerPrivacy}</Link>
+          <Link to="/terms-of-service">{t.footerTerms}</Link>
+        </nav>
+      </footer>
+
       <nav className="bottom-nav" aria-label="Mobile navigation">
         <NavLink to="/" end className={({ isActive }) => (isActive ? 'bottom-link active' : 'bottom-link')}>
           <Icon name="home-1" className="bottom-ico" />

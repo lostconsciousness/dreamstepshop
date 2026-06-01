@@ -8,6 +8,7 @@ import { StateBlock } from '../components/State';
 import { isOrderPaid, useOrderPayment } from '../hooks/useOrderPayment';
 import { useI18n } from '../i18n';
 import type { ShippingAddress } from '../types';
+import { getDisplayTotalFromLines } from '../pricing';
 import { extractApiError } from '../utils';
 
 const formatShippingBlock = (s: ShippingAddress): string => {
@@ -121,7 +122,12 @@ export const OrderPage = () => {
                   <PriceDisplay value={line.unit_price} currency={line.currency} size="sm" />
                 </p>
               </div>
-              <PriceDisplay value={line.line_total} currency={line.currency} size="sm" />
+              <PriceDisplay
+                value={line.unit_price}
+                currency={line.currency}
+                quantity={line.quantity}
+                size="sm"
+              />
             </div>
           ))}
         </div>
@@ -134,7 +140,7 @@ export const OrderPage = () => {
         </div>
         <div className="summary-row large">
           <span>{t.total}</span>
-          <PriceDisplay value={order.total} currency={orderCurrency} />
+          <PriceDisplay amount={getDisplayTotalFromLines(order.lines)} currency={orderCurrency} />
         </div>
 
         {paid ? <p className="toast success">{t.paymentDone}</p> : null}

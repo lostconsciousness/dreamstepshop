@@ -1,6 +1,6 @@
 import { API_BASE_URL } from './config';
 import { resolveProductImageUrl } from './media';
-import { repairMojibake, cleanProductNameForDisplay } from './text';
+import { cleanProductNameForDisplay, cleanProductDescriptionForDisplay } from './text';
 import type { Language } from './i18n';
 import type {
   ApiErrorResponse,
@@ -182,7 +182,7 @@ const normalizeOrder = (order: Order): Order => ({
 const normalizeProduct = (product: Product): Product => ({
   ...product,
   name: cleanProductNameForDisplay(product?.name) ?? product.name,
-  description: repairMojibake(product?.description),
+  description: cleanProductDescriptionForDisplay(product?.description),
   category: product?.category ?? null,
   is_active: product?.is_active !== false,
   image_url: resolveProductImageUrl(product?.image_url),

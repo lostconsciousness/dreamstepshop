@@ -9,7 +9,8 @@ import { StateBlock } from '../components/State';
 import { useOrderPayment } from '../hooks/useOrderPayment';
 import { useI18n } from '../i18n';
 import type { CheckoutPayload } from '../types';
-import { extractApiError, formatPrice } from '../utils';
+import { getDisplayTotalFromLines, formatDisplayTotalFromLines } from '../pricing';
+import { extractApiError } from '../utils';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -134,7 +135,10 @@ export const CheckoutPage = () => {
         message={
           paying
             ? t.checkoutRedirectingMessage(order.id)
-            : t.orderCreatedMessage(order.id, formatPrice(order.total, order.currency))
+            : t.orderCreatedMessage(
+                order.id,
+                formatDisplayTotalFromLines(order.lines, order.currency),
+              )
         }
         actions={
           paying ? null : (
@@ -340,7 +344,7 @@ export const CheckoutPage = () => {
             <span>
               {checkoutMutation.isPending || orderPay.isPaying
                 ? t.confirmingAndPaying
-                : `${t.confirmAndPay} · ${formatPrice(cart.total, cartCurrency)}`}
+                : `${t.confirmAndPay} · ${formatDisplayTotalFromLines(cart.lines, cartCurrency)}`}
             </span>
           </button>
         </form>
@@ -358,7 +362,12 @@ export const CheckoutPage = () => {
                     {t.size}: <strong>{line.size}</strong> · ×{line.quantity}
                   </p>
                 </div>
-                <PriceDisplay value={line.line_total} currency={line.currency} size="sm" />
+                <PriceDisplay
+                  value={line.unit_price}
+                  currency={line.currency}
+                  quantity={line.quantity}
+                  size="sm"
+                />
               </div>
             ))}
           </div>
@@ -369,7 +378,10 @@ export const CheckoutPage = () => {
           </div>
           <div className="summary-row large">
             <span>{t.payNow}</span>
-            <PriceDisplay value={cart.total} currency={cartCurrency} />
+            <PriceDisplay
+              amount={getDisplayTotalFromLines(cart.lines)}
+              currency={cartCurrency}
+            />
           </div>
         </aside>
       </div>

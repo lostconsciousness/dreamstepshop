@@ -55,3 +55,26 @@ export const cleanProductNameForDisplay = (value: string | null | undefined): st
   }
   return collapseSpaces(repaired.replace(CYRILLIC_CLAUSE, ''));
 };
+
+export const cleanProductDescriptionForDisplay = (
+  value: string | null | undefined,
+): string | null => {
+  const repaired = repairMojibake(value);
+  if (repaired == null) {
+    return null;
+  }
+  return collapseSpaces(repaired.replace(CYRILLIC_CLAUSE, ''));
+};
+
+export const splitDescriptionParagraphs = (value: string): string[] =>
+  value
+    .split(/\n{2,}|\n/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+export const truncateText = (value: string, maxLength = 96): string => {
+  if (value.length <= maxLength) {
+    return value;
+  }
+  return `${value.slice(0, maxLength).trimEnd()}…`;
+};
