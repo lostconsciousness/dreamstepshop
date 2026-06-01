@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../api';
 import { useCurrency } from '../currency';
 import { Icon } from './Icon';
+import { PriceDisplay } from './PriceDisplay';
 import { useI18n } from '../i18n';
 import type { Product } from '../types';
 import { getProductImageSrc, PRODUCT_PLACEHOLDER_IMAGE } from '../media';
@@ -69,6 +70,14 @@ export const ProductCard = ({ product, index = 0 }: { product: Product; index?: 
         <Link to={productUrl} className="product-card-title-link">
           <h3>{product.name}</h3>
         </Link>
+
+        {defaultVariant ? (
+          <PriceDisplay
+            value={defaultVariant.price}
+            currency={defaultVariant.currency}
+            className="product-card-price"
+          />
+        ) : null}
 
         <div className="product-card-actions">
           <button
