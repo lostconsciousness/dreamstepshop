@@ -13,6 +13,7 @@ import { isOrderPaid, useOrderPayment } from '../hooks/useOrderPayment';
 import { useI18n } from '../i18n';
 import { rememberOrderAccess } from '../orderAccess';
 import { getStoredOrderEmail, setStoredOrderEmail } from '../orderEmail';
+import { DEFAULT_PAYMENT_PROVIDER } from '../paymentProviders';
 import type { PaymentProvider } from '../payment';
 import { getDisplayTotalFromLines } from '../pricing';
 import { extractApiError } from '../utils';
@@ -34,21 +35,14 @@ export const OrderPaymentPage = () => {
     enabled: Number.isFinite(orderId) && Boolean(email),
   });
 
-  const paymentoStatusQuery = useQuery({
-    queryKey: ['paymento-status'],
-    queryFn: api.getPaymentoStatus,
-    staleTime: 60_000,
-  });
-
-  const paymentoAvailable = paymentoStatusQuery.data?.configured ?? false;
   const order = orderQuery.data;
   const paid = order ? isOrderPaid(order.status) : false;
 
   useEffect(() => {
-    if (!provider && paymentoStatusQuery.isSuccess) {
-      setProvider(paymentoAvailable ? 'paymento' : 'cryptocloud');
+    if (!provider) {
+      setProvider(DEFAULT_PAYMENT_PROVIDER);
     }
-  }, [paymentoAvailable, paymentoStatusQuery.isSuccess, provider]);
+  }, [provider]);
 
   useEffect(() => {
     if (order) {
@@ -131,7 +125,6 @@ export const OrderPaymentPage = () => {
           <PaymentMethodPicker
             value={provider}
             onChange={setProvider}
-            paymentoAvailable={paymentoAvailable}
             disabled={orderPay.isPaying}
           />
 

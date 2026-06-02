@@ -1,42 +1,29 @@
-import { Icon } from './Icon';
 import { useI18n } from '../i18n';
 import type { PaymentProvider } from '../payment';
+import { PAYMENT_PROVIDER_OPTIONS } from '../paymentProviders';
 
 type PaymentMethodPickerProps = {
   value: PaymentProvider | null;
   onChange: (provider: PaymentProvider) => void;
-  paymentoAvailable: boolean;
   disabled?: boolean;
 };
 
 export const PaymentMethodPicker = ({
   value,
   onChange,
-  paymentoAvailable,
   disabled = false,
 }: PaymentMethodPickerProps) => {
   const { t } = useI18n();
 
-  const options: { id: PaymentProvider; label: string; description: string }[] = [
-    ...(paymentoAvailable
-      ? [
-          {
-            id: 'paymento' as const,
-            label: t.payWithPaymento,
-            description: t.paymentMethodPaymentoHint,
-          },
-        ]
-      : []),
-    {
-      id: 'cryptocloud',
-      label: t.payWithCryptoCloud,
-      description: t.paymentMethodCryptoCloudHint,
-    },
-  ];
+  const labelFor = (id: PaymentProvider): string =>
+    id === 'paymento' ? t.payWithPaymento : t.payWithCryptoCloud;
+
+  const hintFor = (id: PaymentProvider): string =>
+    id === 'paymento' ? t.paymentMethodPaymentoHint : t.paymentMethodCryptoCloudHint;
 
   return (
     <div className="payment-method-picker" role="radiogroup" aria-label={t.choosePaymentMethod}>
-      {options.map((option) => {
+      {PAYMENT_PROVIDER_OPTIONS.map((option) => {
         const selected = value === option.id;
         return (
           <label
@@ -52,11 +39,18 @@ export const PaymentMethodPicker = ({
               onChange={() => onChange(option.id)}
             />
             <span className="payment-method-option-body">
-              <span className="payment-method-option-label">
-                <Icon name="credit-card-1" />
-                <span>{option.label}</span>
+              <span className="payment-method-option-logo-wrap">
+                <img
+                  src={option.logo}
+                  alt={option.logoAlt}
+                  className="payment-method-option-logo"
+                  loading="lazy"
+                />
               </span>
-              <span className="payment-method-option-desc">{option.description}</span>
+              <span className="payment-method-option-text">
+                <span className="payment-method-option-label">{labelFor(option.id)}</span>
+                <span className="payment-method-option-desc">{hintFor(option.id)}</span>
+              </span>
             </span>
           </label>
         );
