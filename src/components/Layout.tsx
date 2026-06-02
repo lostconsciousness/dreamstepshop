@@ -45,6 +45,7 @@ export const Layout = () => {
         <p className="site-footer-copy">© {new Date().getFullYear()} Dream Step Merch</p>
         <nav className="site-footer-nav" aria-label="Legal and support">
           <Link to="/contact">{t.footerContact}</Link>
+          <Link to="/orders/track">{t.trackOrder}</Link>
           <Link to="/privacy-policy">{t.footerPrivacy}</Link>
           <Link to="/terms-of-service">{t.footerTerms}</Link>
         </nav>

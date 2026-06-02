@@ -1,14 +1,14 @@
 import { FormEvent, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { api, getStoredCartToken } from '../api';
 import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
 import { PriceDisplay } from '../components/PriceDisplay';
 import { StateBlock } from '../components/State';
-import { PaymentMethodButtons } from '../components/PaymentMethodButtons';
-import { useOrderPayment } from '../hooks/useOrderPayment';
 import { useI18n } from '../i18n';
+import { rememberOrderAccess } from '../orderAccess';
+import { setStoredOrderEmail } from '../orderEmail';
 import { setPendingOrderId } from '../pendingOrder';
 import type { CheckoutPayload } from '../types';
 import { getDisplayTotalFromLines, formatDisplayTotalFromLines } from '../pricing';
@@ -28,6 +28,7 @@ const normalizeTelegramUsername = (value: string): string | null => {
 export const CheckoutPage = () => {
   const { t } = useI18n();
   const { currency } = useCurrency();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const hasToken = Boolean(getStoredCartToken());
   const [email, setEmail] = useState('');
@@ -41,7 +42,6 @@ export const CheckoutPage = () => {
   const [shippingNotes, setShippingNotes] = useState('');
   const [telegramUsername, setTelegramUsername] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
-  const orderPay = useOrderPayment();
 
   const cartQuery = useQuery({
     queryKey: ['cart', currency],
@@ -49,18 +49,15 @@ export const CheckoutPage = () => {
     enabled: hasToken,
   });
 
-  const paymentoStatusQuery = useQuery({
-    queryKey: ['paymento-status'],
-    queryFn: api.getPaymentoStatus,
-    staleTime: 60_000,
-  });
-
   const checkoutMutation = useMutation({
     mutationFn: api.checkout,
     onSuccess: (order) => {
       setFormError(null);
       setPendingOrderId(order.id);
-      queryClient.setQueryData(['order', order.id, currency], order);
+      setStoredOrderEmail(order.email);
+      rememberOrderAccess(order.id);
+      queryClient.setQueryData(['order', order.id, order.email, currency], order);
+      navigate(`/orders/${order.id}/pay`, { replace: true });
     },
     onError: (error) => {
       setFormError(extractApiError(error));
@@ -126,49 +123,6 @@ export const CheckoutPage = () => {
           <Link to="/" className="btn btn-primary">
             {t.toCatalog}
           </Link>
-        }
-      />
-    );
-  }
-
-  if (checkoutMutation.isSuccess) {
-    const order = checkoutMutation.data;
-    const paying = orderPay.isPaying;
-    const payFailed = Boolean(orderPay.error);
-    const paymentoAvailable = paymentoStatusQuery.data?.configured ?? false;
-
-    return (
-      <StateBlock
-        emoji={paying ? '💳' : '✅'}
-        title={paying ? t.redirectingToPay : t.orderCreated}
-        message={
-          paying
-            ? t.checkoutRedirectingMessage(order.id)
-            : t.orderCreatedChoosePayment(
-                order.id,
-                formatDisplayTotalFromLines(order.lines, order.currency),
-              )
-        }
-        actions={
-          paying ? null : (
-            <>
-              {payFailed ? (
-                <p className="toast error" style={{ margin: 0, width: '100%', textAlign: 'center' }}>
-                  {extractApiError(orderPay.error)}
-                </p>
-              ) : null}
-              <PaymentMethodButtons
-                order={order}
-                paymentoAvailable={paymentoAvailable}
-                isPaying={orderPay.isPaying}
-                payingProvider={orderPay.payingProvider}
-                onPay={orderPay.pay}
-              />
-              <Link to={`/orders/${order.id}`} className="btn btn-ghost">
-                {t.viewOrder}
-              </Link>
-            </>
-          )
         }
       />
     );
@@ -345,11 +299,13 @@ export const CheckoutPage = () => {
           <button
             type="submit"
             className="btn btn-primary btn-block"
-            disabled={checkoutMutation.isPending || orderPay.isPaying}
+            disabled={checkoutMutation.isPending}
           >
             <Icon name="lock-alt-1" />
             <span>
-              {checkoutMutation.isPending ? t.confirming : `${t.confirm} · ${formatDisplayTotalFromLines(cart.lines, cartCurrency)}`}
+              {checkoutMutation.isPending
+                ? t.confirming
+                : `${t.confirmAndContinueToPayment} · ${formatDisplayTotalFromLines(cart.lines, cartCurrency)}`}
             </span>
           </button>
         </form>

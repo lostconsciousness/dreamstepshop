@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect } from 'react';
 
 export type Language = 'en';
 
-type Messages = {
+export type Messages = {
   navCatalog: string;
   navCart: string;
   navCheckout: string;
@@ -83,6 +83,44 @@ type Messages = {
   payWithPaymento: string;
   payWithCryptoCloud: string;
   choosePaymentMethod: string;
+  confirmAndContinueToPayment: string;
+  paymentPageEyebrow: string;
+  paymentPageTitle: (orderId: number) => string;
+  paymentPageSubtitle: string;
+  reviewOrderDetails: string;
+  proceedToPayment: string;
+  amountDue: string;
+  paymentAmountHint: string;
+  paymentMethodPaymentoHint: string;
+  paymentMethodCryptoCloudHint: string;
+  trackOrder: string;
+  trackOrderTitle: string;
+  trackOrderSubtitle: string;
+  trackOrderHint: string;
+  orderNumberLabel: string;
+  orderNumberPlaceholder: string;
+  findOrder: string;
+  orderConfirmationTitle: string;
+  orderConfirmationMessage: string;
+  orderStatusTitle: (orderId: number) => string;
+  orderPendingPaymentMessage: string;
+  completePayment: string;
+  orderStatusPaid: string;
+  orderStatusPending: string;
+  orderStatusProcessing: string;
+  orderStatusShipped: string;
+  orderStatusDelivered: string;
+  orderStatusCancelled: string;
+  paymentReturnNoOrderId: string;
+  paymentEmailRequiredMessage: string;
+  orderEmailRequiredTitle: string;
+  orderEmailRequiredSubtitle: string;
+  orderEmailRequiredHint: string;
+  continueWithEmail: string;
+  orderHistoryTitle: string;
+  orderHistoryHint: string;
+  loadOrderHistory: string;
+  orderHistoryEmpty: string;
   redirectingToPay: string;
   paymentSuccessTitle: string;
   paymentFailedTitle: string;
@@ -259,6 +297,47 @@ const messages: Record<Language, Messages> = {
     payWithPaymento: 'Pay with crypto (Paymento)',
     payWithCryptoCloud: 'Pay with crypto (CryptoCloud)',
     choosePaymentMethod: 'Choose payment method',
+    confirmAndContinueToPayment: 'Continue to payment',
+    paymentPageEyebrow: 'Payment',
+    paymentPageTitle: (orderId) => `Pay for order #${orderId}`,
+    paymentPageSubtitle: 'Review your details and choose how you want to pay.',
+    reviewOrderDetails: 'Order details',
+    proceedToPayment: 'Proceed to payment',
+    amountDue: 'Amount due',
+    paymentAmountHint: 'You will be redirected to the payment provider after clicking the button.',
+    paymentMethodPaymentoHint: 'Pay with cryptocurrency via Paymento.',
+    paymentMethodCryptoCloudHint: 'Pay with cryptocurrency via CryptoCloud.',
+    trackOrder: 'Track order',
+    trackOrderTitle: 'Find your order',
+    trackOrderSubtitle: 'Enter your order number and the email used at checkout.',
+    trackOrderHint: 'You will see order status, items, and payment confirmation.',
+    orderNumberLabel: 'Order number',
+    orderNumberPlaceholder: 'e.g. 42',
+    findOrder: 'Find order',
+    orderConfirmationTitle: 'Order confirmed',
+    orderConfirmationMessage:
+      'Thank you! Your payment was received. We will process and ship your order soon.',
+    orderStatusTitle: (orderId) => `Order #${orderId}`,
+    orderPendingPaymentMessage: 'Payment is pending. Complete payment to confirm your order.',
+    completePayment: 'Complete payment',
+    orderStatusPaid: 'Paid',
+    orderStatusPending: 'Awaiting payment',
+    orderStatusProcessing: 'Processing',
+    orderStatusShipped: 'Shipped',
+    orderStatusDelivered: 'Delivered',
+    orderStatusCancelled: 'Cancelled',
+    paymentReturnNoOrderId:
+      'Could not determine your order. Use Track order with your order number and email.',
+    paymentEmailRequiredMessage:
+      'Enter the email you used at checkout so we can verify your payment status.',
+    orderEmailRequiredTitle: 'Confirm your email',
+    orderEmailRequiredSubtitle: 'Enter the email from checkout to view this order.',
+    orderEmailRequiredHint: 'We use your email to verify access to order details.',
+    continueWithEmail: 'Continue',
+    orderHistoryTitle: 'Your orders',
+    orderHistoryHint: 'All orders placed with this email address.',
+    loadOrderHistory: 'Show my orders',
+    orderHistoryEmpty: 'No orders found for this email.',
     redirectingToPay: 'Redirecting to payment…',
     paymentSuccessTitle: 'Payment successful',
     paymentFailedTitle: 'Payment not completed',

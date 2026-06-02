@@ -7,6 +7,7 @@ import type {
   Cart,
   CheckoutPayload,
   Order,
+  OrderListResponse,
   PaymentInit,
   PaymentoStatus,
   Product,
@@ -261,8 +262,26 @@ export const api = {
     return normalizeOrder(data);
   },
 
-  async getOrder(orderId: number | string): Promise<Order> {
-    const { data } = await requestJson<Order>(`/api/orders/${orderId}`);
+  async getOrder(orderId: number | string, email: string): Promise<Order> {
+    const query = new URLSearchParams({ email: email.trim() });
+    const { data } = await requestJson<Order>(`/api/orders/${orderId}?${query}`);
+    return normalizeOrder(data);
+  },
+
+  async getOrdersByEmail(email: string): Promise<Order[]> {
+    const query = new URLSearchParams({ email: email.trim() });
+    const { data } = await requestJson<OrderListResponse>(`/api/orders?${query}`);
+    return Array.isArray(data?.orders) ? data.orders.map(normalizeOrder) : [];
+  },
+
+  async lookupOrder(orderId: number, email: string): Promise<Order> {
+    const { data } = await requestJson<Order>('/api/orders/lookup', {
+      method: 'POST',
+      body: {
+        order_id: Number(orderId),
+        email: email.trim(),
+      },
+    });
     return normalizeOrder(data);
   },
 

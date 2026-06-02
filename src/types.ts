@@ -103,6 +103,10 @@ export type PaymentoStatus = {
   return_url?: string;
 };
 
+export type OrderListResponse = {
+  orders: Order[];
+};
+
 export type ApiErrorResponse = {
   detail?: string | { msg?: string } | Array<{ msg?: string }>;
 };

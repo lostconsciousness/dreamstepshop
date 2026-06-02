@@ -6,7 +6,9 @@ import { CartPage } from './pages/CartPage';
 import { CatalogPage } from './pages/CatalogPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { OrderLookupPage } from './pages/OrderLookupPage';
 import { OrderPage } from './pages/OrderPage';
+import { OrderPaymentPage } from './pages/OrderPaymentPage';
 import { PaymentFailedPage } from './pages/PaymentFailedPage';
 import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
 import { ProductPage } from './pages/ProductPage';
@@ -41,6 +43,8 @@ const router = createBrowserRouter([
       { path: 'products/:id', element: <ProductPage /> },
       { path: 'cart', element: <CartPage /> },
       { path: 'checkout', element: <CheckoutPage /> },
+      { path: 'orders/track', element: <OrderLookupPage /> },
+      { path: 'orders/:id/pay', element: <OrderPaymentPage /> },
       { path: 'orders/:id', element: <OrderPage /> },
       { path: 'payment-success', element: <PaymentSuccessPage /> },
       { path: 'payment-failed', element: <PaymentFailedPage /> },

@@ -17,7 +17,7 @@ export const PaymentFailedPage = () => {
       actions={
         <>
           {orderId ? (
-            <Link to={`/orders/${orderId}`} className="btn btn-primary">
+            <Link to={`/orders/${orderId}/pay`} className="btn btn-primary">
               <Icon name="credit-card-1" />
               <span>{t.tryPayAgain}</span>
             </Link>
