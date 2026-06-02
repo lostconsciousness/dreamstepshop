@@ -8,6 +8,7 @@ import type {
   CheckoutPayload,
   Order,
   PaymentInit,
+  PaymentoStatus,
   Product,
 } from './types';
 const CART_TOKEN_STORAGE_KEY = 'cart_token';
@@ -270,5 +271,21 @@ export const api = {
       method: 'POST',
     });
     return data;
+  },
+
+  async payOrderPaymento(orderId: number | string): Promise<PaymentInit> {
+    const { data } = await requestJson<PaymentInit>(`/api/orders/${orderId}/payment/paymento`, {
+      method: 'POST',
+    });
+    return data;
+  },
+
+  async getPaymentoStatus(): Promise<PaymentoStatus> {
+    try {
+      const { data } = await requestJson<PaymentoStatus>('/api/payments/paymento/status');
+      return data;
+    } catch {
+      return { configured: false };
+    }
   },
 };

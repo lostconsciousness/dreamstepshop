@@ -70,6 +70,7 @@ type Messages = {
   confirming: string;
   confirmingAndPaying: string;
   checkoutRedirectingMessage: (orderId: number) => string;
+  orderCreatedChoosePayment: (orderId: number, total: string) => string;
   invalidEmail: string;
   invalidOrderId: string;
   loadingOrder: string;
@@ -79,11 +80,17 @@ type Messages = {
   positions: string;
   processing: string;
   payCrypto: string;
+  payWithPaymento: string;
+  payWithCryptoCloud: string;
+  choosePaymentMethod: string;
   redirectingToPay: string;
   paymentSuccessTitle: string;
   paymentFailedTitle: string;
   paymentReturnSuccess: string;
   paymentReturnFail: string;
+  paymentConfirmingTitle: string;
+  paymentConfirmingMessage: (orderId: number) => string;
+  paymentConfirmingTimeout: string;
   tryPayAgain: string;
   toCatalog: string;
   paymentDone: string;
@@ -235,9 +242,11 @@ const messages: Record<Language, Messages> = {
     confirm: 'Confirm order',
     confirmAndPay: 'Place order and pay',
     confirming: 'Confirming...',
-    confirmingAndPaying: 'Creating order, redirecting to payment…',
+    confirmingAndPaying: 'Creating order…',
     checkoutRedirectingMessage: (orderId) =>
-      `Order #${orderId} created. Opening CryptoCloud payment page…`,
+      `Order #${orderId} created. Opening payment page…`,
+    orderCreatedChoosePayment: (orderId, total) =>
+      `Order #${orderId} confirmed. Total: ${total}. Choose a payment method:`,
     invalidEmail: 'Please enter a valid email.',
     invalidOrderId: 'Invalid order id',
     loadingOrder: 'Loading order...',
@@ -247,12 +256,20 @@ const messages: Record<Language, Messages> = {
     positions: 'Items',
     processing: 'Processing...',
     payCrypto: 'Pay with crypto',
+    payWithPaymento: 'Pay with crypto (Paymento)',
+    payWithCryptoCloud: 'Pay with crypto (CryptoCloud)',
+    choosePaymentMethod: 'Choose payment method',
     redirectingToPay: 'Redirecting to payment…',
     paymentSuccessTitle: 'Payment successful',
     paymentFailedTitle: 'Payment not completed',
     paymentReturnSuccess:
-      'Thank you! Your payment was received. Order status will update after CryptoCloud confirms the transaction.',
+      'Thank you! We received your payment. Order status updates after the provider confirms the transaction.',
     paymentReturnFail: 'Payment was cancelled or failed. You can try again from the order page.',
+    paymentConfirmingTitle: 'Confirming payment…',
+    paymentConfirmingMessage: (orderId) =>
+      `Order #${orderId} — waiting for payment confirmation. This usually takes a few seconds.`,
+    paymentConfirmingTimeout:
+      'Payment is still processing. Check your order page in a minute — status updates automatically.',
     tryPayAgain: 'Try again',
     toCatalog: 'Continue shopping',
     paymentDone: 'Payment confirmed.',

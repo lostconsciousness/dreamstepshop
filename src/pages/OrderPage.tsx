@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { api } from '../api';
 import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
+import { PaymentMethodButtons } from '../components/PaymentMethodButtons';
 import { PriceDisplay } from '../components/PriceDisplay';
 import { StateBlock } from '../components/State';
 import { isOrderPaid, useOrderPayment } from '../hooks/useOrderPayment';
@@ -37,6 +38,12 @@ export const OrderPage = () => {
     enabled: Number.isFinite(orderId),
   });
 
+  const paymentoStatusQuery = useQuery({
+    queryKey: ['paymento-status'],
+    queryFn: api.getPaymentoStatus,
+    staleTime: 60_000,
+  });
+
   if (!Number.isFinite(orderId)) {
     return <StateBlock emoji="🤔" title={t.invalidOrderId} />;
   }
@@ -59,6 +66,7 @@ export const OrderPage = () => {
   const totalQty = order.lines.reduce((sum, line) => sum + (Number(line.quantity) || 0), 0);
   const orderCurrency = order.currency || order.lines[0]?.currency || 'UAH';
   const paid = isOrderPaid(order.status);
+  const paymentoAvailable = paymentoStatusQuery.data?.configured ?? false;
 
   return (
     <section className="content">
@@ -147,15 +155,13 @@ export const OrderPage = () => {
 
         <div className="add-row">
           {!paid ? (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => orderPay.pay(order)}
-              disabled={orderPay.isPaying}
-            >
-              <Icon name="credit-card-1" />
-              <span>{orderPay.isPaying ? t.redirectingToPay : t.payCrypto}</span>
-            </button>
+            <PaymentMethodButtons
+              order={order}
+              paymentoAvailable={paymentoAvailable}
+              isPaying={orderPay.isPaying}
+              payingProvider={orderPay.payingProvider}
+              onPay={orderPay.pay}
+            />
           ) : null}
           <Link to="/" className="btn btn-ghost">
             <Icon name="arrow-left" />

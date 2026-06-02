@@ -1118,6 +1118,13 @@ img {
   align-items: center;
 }
 
+.payment-methods {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+  flex: 1 1 100%;
+}
+
 /* ---------- Forms ---------- */
 
 .input-group {

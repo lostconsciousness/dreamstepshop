@@ -6,8 +6,10 @@ import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
 import { PriceDisplay } from '../components/PriceDisplay';
 import { StateBlock } from '../components/State';
+import { PaymentMethodButtons } from '../components/PaymentMethodButtons';
 import { useOrderPayment } from '../hooks/useOrderPayment';
 import { useI18n } from '../i18n';
+import { setPendingOrderId } from '../pendingOrder';
 import type { CheckoutPayload } from '../types';
 import { getDisplayTotalFromLines, formatDisplayTotalFromLines } from '../pricing';
 import { extractApiError } from '../utils';
@@ -47,12 +49,18 @@ export const CheckoutPage = () => {
     enabled: hasToken,
   });
 
+  const paymentoStatusQuery = useQuery({
+    queryKey: ['paymento-status'],
+    queryFn: api.getPaymentoStatus,
+    staleTime: 60_000,
+  });
+
   const checkoutMutation = useMutation({
     mutationFn: api.checkout,
     onSuccess: (order) => {
       setFormError(null);
+      setPendingOrderId(order.id);
       queryClient.setQueryData(['order', order.id, currency], order);
-      orderPay.pay(order);
     },
     onError: (error) => {
       setFormError(extractApiError(error));
@@ -127,6 +135,7 @@ export const CheckoutPage = () => {
     const order = checkoutMutation.data;
     const paying = orderPay.isPaying;
     const payFailed = Boolean(orderPay.error);
+    const paymentoAvailable = paymentoStatusQuery.data?.configured ?? false;
 
     return (
       <StateBlock
@@ -135,7 +144,7 @@ export const CheckoutPage = () => {
         message={
           paying
             ? t.checkoutRedirectingMessage(order.id)
-            : t.orderCreatedMessage(
+            : t.orderCreatedChoosePayment(
                 order.id,
                 formatDisplayTotalFromLines(order.lines, order.currency),
               )
@@ -148,15 +157,13 @@ export const CheckoutPage = () => {
                   {extractApiError(orderPay.error)}
                 </p>
               ) : null}
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => orderPay.pay(order)}
-                disabled={orderPay.isPaying}
-              >
-                <Icon name="credit-card-1" />
-                <span>{t.payCrypto}</span>
-              </button>
+              <PaymentMethodButtons
+                order={order}
+                paymentoAvailable={paymentoAvailable}
+                isPaying={orderPay.isPaying}
+                payingProvider={orderPay.payingProvider}
+                onPay={orderPay.pay}
+              />
               <Link to={`/orders/${order.id}`} className="btn btn-ghost">
                 {t.viewOrder}
               </Link>
@@ -342,9 +349,7 @@ export const CheckoutPage = () => {
           >
             <Icon name="lock-alt-1" />
             <span>
-              {checkoutMutation.isPending || orderPay.isPaying
-                ? t.confirmingAndPaying
-                : `${t.confirmAndPay} · ${formatDisplayTotalFromLines(cart.lines, cartCurrency)}`}
+              {checkoutMutation.isPending ? t.confirming : `${t.confirm} · ${formatDisplayTotalFromLines(cart.lines, cartCurrency)}`}
             </span>
           </button>
         </form>

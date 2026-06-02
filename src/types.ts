@@ -90,8 +90,17 @@ export type PaymentInit = {
   order_id: number;
   status: string;
   payment_url: string | null;
-  invoice_uuid: string | null;
+  invoice_uuid?: string | null;
+  payment_token?: string | null;
   message: string;
+};
+
+export type PaymentoStatus = {
+  configured: boolean;
+  merchant_ping_ok?: boolean;
+  initiate_payment?: string;
+  ipn_url?: string;
+  return_url?: string;
 };
 
 export type ApiErrorResponse = {
