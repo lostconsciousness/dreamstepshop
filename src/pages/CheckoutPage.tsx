@@ -10,6 +10,7 @@ import { useI18n } from '../i18n';
 import { rememberOrderAccess } from '../orderAccess';
 import { setStoredOrderEmail } from '../orderEmail';
 import { setPendingOrderId } from '../pendingOrder';
+import { getStoredTelegramId } from '../telegramSession';
 import type { CheckoutPayload } from '../types';
 import {
   formatSaleTotalFromLines,
@@ -112,6 +113,7 @@ export const CheckoutPage = () => {
       },
       shipping_notes: notesTrim ? notesTrim : null,
       telegram_username: telegram,
+      telegram_user_id: getStoredTelegramId(),
     };
 
     checkoutMutation.mutate(payload);
