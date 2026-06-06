@@ -70,6 +70,7 @@ export type CheckoutPayload = {
   };
   shipping_notes: string | null;
   telegram_username: string | null;
+  telegram_user_id: number | null;
 };
 
 export type Order = {
@@ -80,6 +81,7 @@ export type Order = {
   shipping: ShippingAddress | null;
   shipping_notes: string | null;
   telegram_username: string | null;
+  telegram_user_id: number | null;
   status: string;
   total: string;
   currency: string;

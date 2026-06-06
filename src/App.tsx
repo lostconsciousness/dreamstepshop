@@ -16,6 +16,7 @@ import { ContactPage } from './pages/ContactPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsOfServicePage } from './pages/TermsOfServicePage';
 import { PrivacyPolicyRedirect, TermsOfServiceRedirect } from './pages/LegalRedirects';
+import { TelegramEntryPage } from './pages/TelegramEntryPage';
 
 const RouteErrorElement = () => {
   const { t } = useI18n();
@@ -53,6 +54,7 @@ const router = createBrowserRouter([
       { path: 'terms-of-service', element: <TermsOfServicePage /> },
       { path: 'privacy', element: <PrivacyPolicyRedirect /> },
       { path: 'terms', element: <TermsOfServiceRedirect /> },
+      { path: ':tgId', element: <TelegramEntryPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
