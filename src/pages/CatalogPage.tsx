@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api';
 import type { ProductCategory } from '../categories';
@@ -10,13 +10,36 @@ import { CatalogSkeleton, StateBlock } from '../components/State';
 import { useI18n } from '../i18n';
 import { extractApiError } from '../utils';
 
+const SALE_COUNTDOWN_DEADLINE = new Date('2026-06-09T17:01:24+02:00').getTime();
+
+const getSaleCountdown = () => {
+  const remainingMs = Math.max(SALE_COUNTDOWN_DEADLINE - Date.now(), 0);
+  const totalSeconds = Math.floor(remainingMs / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return { hours, minutes, seconds };
+};
+
+const formatCountdownPart = (value: number) => String(value).padStart(2, '0');
+
 export const CatalogPage = () => {
   const { t, language } = useI18n();
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory | null>(null);
+  const [saleCountdown, setSaleCountdown] = useState(getSaleCountdown);
   const productsQuery = useQuery({
     queryKey: ['products', language],
     queryFn: () => api.getProducts(language),
   });
+
+  useEffect(() => {
+    const timerId = window.setInterval(() => {
+      setSaleCountdown(getSaleCountdown());
+    }, 1000);
+
+    return () => window.clearInterval(timerId);
+  }, []);
 
   const categories = useMemo(
     () => (productsQuery.data ? getCategoriesFromProducts(productsQuery.data) : []),
@@ -41,6 +64,26 @@ export const CatalogPage = () => {
               <Icon name="bolt-1" />
               <span>{t.heroCta}</span>
             </a>
+          </div>
+          <div className="sale-countdown" aria-live="polite">
+            <div className="sale-countdown-copy">
+              <span>{t.saleCountdownLabel}</span>
+              <strong>{t.saleCountdownTitle}</strong>
+            </div>
+            <div className="sale-countdown-timer">
+              <span>
+                <strong>{formatCountdownPart(saleCountdown.hours)}</strong>
+                <small>{t.saleCountdownHours}</small>
+              </span>
+              <span>
+                <strong>{formatCountdownPart(saleCountdown.minutes)}</strong>
+                <small>{t.saleCountdownMinutes}</small>
+              </span>
+              <span>
+                <strong>{formatCountdownPart(saleCountdown.seconds)}</strong>
+                <small>{t.saleCountdownSeconds}</small>
+              </span>
+            </div>
           </div>
           <ul className="hero-perks">
             <li>

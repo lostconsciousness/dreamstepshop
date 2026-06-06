@@ -403,6 +403,72 @@ img {
   flex-wrap: wrap;
 }
 
+.sale-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  width: min(100%, 34rem);
+  padding: 0.85rem 0.95rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgb(246 177 79 / 38%);
+  background: linear-gradient(135deg, rgb(246 177 79 / 14%), rgb(255 122 89 / 10%));
+}
+
+.sale-countdown-copy {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.sale-countdown-copy span {
+  color: #ffd8a8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sale-countdown-copy strong {
+  color: var(--text);
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 1rem;
+  line-height: 1.15;
+}
+
+.sale-countdown-timer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(3.2rem, 1fr));
+  gap: 0.45rem;
+  flex: 0 0 auto;
+}
+
+.sale-countdown-timer span {
+  display: grid;
+  justify-items: center;
+  gap: 0.05rem;
+  min-height: 3.2rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: var(--radius-sm);
+  background: rgb(5 8 28 / 42%);
+  border: 1px solid rgb(255 255 255 / 10%);
+}
+
+.sale-countdown-timer strong {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.1;
+  color: var(--accent-warm);
+}
+
+.sale-countdown-timer small {
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .hero-perks {
   margin-top: 0.4rem;
   display: flex;
@@ -1788,6 +1854,15 @@ img {
   .hero {
     padding: 1.3rem 1.1rem;
     border-radius: var(--radius-lg);
+  }
+
+  .sale-countdown {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sale-countdown-timer {
+    width: 100%;
   }
 
   .summary-card {

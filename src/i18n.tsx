@@ -11,6 +11,11 @@ export type Messages = {
   heroTitle: string;
   heroSubtitle: string;
   heroCta: string;
+  saleCountdownLabel: string;
+  saleCountdownTitle: string;
+  saleCountdownHours: string;
+  saleCountdownMinutes: string;
+  saleCountdownSeconds: string;
   loadingProducts: string;
   pleaseWait: string;
   cannotLoadCatalog: string;
@@ -190,6 +195,11 @@ const messages: Record<Language, Messages> = {
     heroTitle: 'Wear the dream.',
     heroSubtitle: 'Official Dream Step merch — premium streetwear made for the community.',
     heroCta: 'Shop the drop',
+    saleCountdownLabel: 'Discounts last only 72 hours',
+    saleCountdownTitle: 'Sale ends in',
+    saleCountdownHours: 'Hours',
+    saleCountdownMinutes: 'Minutes',
+    saleCountdownSeconds: 'Seconds',
     loadingProducts: 'Loading products...',
     pleaseWait: 'Hang tight.',
     cannotLoadCatalog: 'Could not load catalog',
