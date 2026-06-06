@@ -11,7 +11,11 @@ import { rememberOrderAccess } from '../orderAccess';
 import { setStoredOrderEmail } from '../orderEmail';
 import { setPendingOrderId } from '../pendingOrder';
 import type { CheckoutPayload } from '../types';
-import { getDisplayTotalFromLines, formatDisplayTotalFromLines } from '../pricing';
+import {
+  formatSaleTotalFromLines,
+  getListTotalFromLines,
+  getSaleTotalFromLines,
+} from '../pricing';
 import { extractApiError } from '../utils';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -305,7 +309,7 @@ export const CheckoutPage = () => {
             <span>
               {checkoutMutation.isPending
                 ? t.confirming
-                : `${t.confirmAndContinueToPayment} · ${formatDisplayTotalFromLines(cart.lines, cartCurrency)}`}
+                : `${t.confirmAndContinueToPayment} · ${formatSaleTotalFromLines(cart.lines, cartCurrency)}`}
             </span>
           </button>
         </form>
@@ -340,7 +344,8 @@ export const CheckoutPage = () => {
           <div className="summary-row large">
             <span>{t.payNow}</span>
             <PriceDisplay
-              amount={getDisplayTotalFromLines(cart.lines)}
+              amount={getSaleTotalFromLines(cart.lines)}
+              originalAmount={getListTotalFromLines(cart.lines)}
               currency={cartCurrency}
             />
           </div>

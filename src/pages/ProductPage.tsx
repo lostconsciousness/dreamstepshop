@@ -5,12 +5,13 @@ import { api } from '../api';
 import type { ProductCategory } from '../categories';
 import { useCurrency } from '../currency';
 import { Icon } from '../components/Icon';
+import { DiscountBadge } from '../components/DiscountBadge';
 import { PriceDisplay } from '../components/PriceDisplay';
 import { StateBlock } from '../components/State';
 import { useI18n } from '../i18n';
 import { getProductImageSrc, PRODUCT_PLACEHOLDER_IMAGE } from '../media';
 import { splitDescriptionParagraphs } from '../text';
-import { formatDisplayPrice } from '../pricing';
+import { formatSalePrice } from '../pricing';
 import {
   FOOTWEAR_SIZES,
   getDefaultVariant,
@@ -123,6 +124,7 @@ export const ProductPage = () => {
       <article className="product-detail">
         <div className="detail-media">
           <div className="detail-image-wrap">
+            <DiscountBadge className="detail-discount-badge" />
             <img
               src={getProductImageSrc(product.image_url)}
               alt={product.name}
@@ -282,7 +284,7 @@ export const ProductPage = () => {
                         ? t.adding
                         : selectedVariant.stock <= 0
                           ? t.outOfStockShort
-                          : `${t.addToCart} · ${formatDisplayPrice(
+                          : `${t.addToCart} · ${formatSalePrice(
                               selectedVariant.price,
                               variantCurrency,
                               quantity,

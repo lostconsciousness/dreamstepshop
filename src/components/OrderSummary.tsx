@@ -1,7 +1,7 @@
 import { PriceDisplay } from './PriceDisplay';
 import { useI18n } from '../i18n';
 import type { Order, ShippingAddress } from '../types';
-import { getDisplayTotalFromLines } from '../pricing';
+import { getListTotalFromLines, getSaleTotalFromLines } from '../pricing';
 
 const formatShippingBlock = (shipping: ShippingAddress): string => {
   const lines: string[] = [shipping.country];
@@ -113,7 +113,11 @@ export const OrderSummary = ({
           </div>
           <div className="summary-row large">
             <span>{t.total}</span>
-            <PriceDisplay amount={getDisplayTotalFromLines(order.lines)} currency={orderCurrency} />
+            <PriceDisplay
+              amount={getSaleTotalFromLines(order.lines)}
+              originalAmount={getListTotalFromLines(order.lines)}
+              currency={orderCurrency}
+            />
           </div>
         </>
       ) : null}

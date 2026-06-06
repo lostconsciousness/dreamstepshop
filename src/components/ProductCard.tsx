@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../api';
 import { useCurrency } from '../currency';
 import { Icon } from './Icon';
+import { DiscountBadge } from './DiscountBadge';
 import { PriceDisplay } from './PriceDisplay';
 import { useI18n } from '../i18n';
 import type { Product } from '../types';
@@ -53,6 +54,7 @@ export const ProductCard = ({ product, index = 0 }: { product: Product; index?: 
         <div className="product-image-wrap">
           <div className="product-image-badges">
             {isNew ? <span className="product-badge product-badge--new">{t.heroBadge}</span> : null}
+            <DiscountBadge />
           </div>
           <img
             src={getProductImageSrc(product.image_url)}

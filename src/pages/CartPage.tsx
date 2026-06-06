@@ -7,7 +7,7 @@ import { PriceDisplay } from '../components/PriceDisplay';
 import { StateBlock } from '../components/State';
 import { useI18n } from '../i18n';
 import { getProductImageSrc, PRODUCT_PLACEHOLDER_IMAGE } from '../media';
-import { getDisplayTotalFromLines } from '../pricing';
+import { getListTotalFromLines, getSaleTotalFromLines } from '../pricing';
 import { extractApiError } from '../utils';
 
 export const CartPage = () => {
@@ -194,7 +194,11 @@ export const CartPage = () => {
           <div className="summary-divider" />
           <div className="summary-row large">
             <span>{t.total}</span>
-            <PriceDisplay amount={getDisplayTotalFromLines(cart.lines)} currency={cartCurrency} />
+            <PriceDisplay
+              amount={getSaleTotalFromLines(cart.lines)}
+              originalAmount={getListTotalFromLines(cart.lines)}
+              currency={cartCurrency}
+            />
           </div>
           <Link to="/checkout" className="btn btn-primary btn-block">
             <Icon name="checkmark-circle" />

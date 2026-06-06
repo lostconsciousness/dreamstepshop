@@ -15,7 +15,7 @@ import { rememberOrderAccess } from '../orderAccess';
 import { getStoredOrderEmail, setStoredOrderEmail } from '../orderEmail';
 import { DEFAULT_PAYMENT_PROVIDER } from '../paymentProviders';
 import type { PaymentProvider } from '../payment';
-import { getDisplayTotalFromLines } from '../pricing';
+import { getListTotalFromLines, getSaleTotalFromLines } from '../pricing';
 import { extractApiError } from '../utils';
 
 export const OrderPaymentPage = () => {
@@ -154,7 +154,8 @@ export const OrderPaymentPage = () => {
           </h2>
           <p className="payment-amount-due">
             <PriceDisplay
-              amount={getDisplayTotalFromLines(order.lines)}
+              amount={getSaleTotalFromLines(order.lines)}
+              originalAmount={getListTotalFromLines(order.lines)}
               currency={orderCurrency}
               size="lg"
             />

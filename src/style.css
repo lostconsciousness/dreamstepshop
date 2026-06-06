@@ -742,10 +742,21 @@ img {
   margin: 0;
 }
 
+.product-card-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
 .product-card-price .price-display-sale {
   font-size: 1.08rem;
   font-weight: 700;
   color: var(--accent-warm);
+}
+
+.product-card-price .price-display-original {
+  font-size: 0.88rem;
 }
 
 .product-card-content h3 {
